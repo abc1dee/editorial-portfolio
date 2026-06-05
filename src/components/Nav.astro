@@ -1,0 +1,130 @@
+---
+import ThemeToggle from "./ThemeToggle.astro";
+
+const navLinks = [
+  { num: "01", label: "WORK", href: "#projects" },
+  { num: "02", label: "ABOUT", href: "#about" },
+  { num: "03", label: "CONTACT", href: "#contact" },
+];
+---
+
+<nav
+  id="main-nav"
+  class="fixed top-0 max-w-6xl w-full mx-auto left-0 right-0 z-50 border-b border-border bg-bg-primary/80 backdrop-blur-md transition-all duration-300"
+>
+  <div class="px-6 py-4 flex items-center justify-between">
+    <!-- Logo / Name -->
+    <a
+      href="/"
+      id="nav-logo"
+      class="text-xs font-mono font-bold tracking-widest text-text-primary uppercase focus-ring"
+    >
+      YourName
+    </a>
+
+    <!-- Desktop Nav Links -->
+    <div class="hidden md:flex items-center gap-8">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class="group text-[11px] font-mono tracking-widest text-text-secondary hover:text-text-primary transition-colors focus-ring flex items-center gap-1.5"
+          >
+            <span class="text-text-muted group-hover:text-text-primary transition-colors">{link.num}.</span>
+            <span class="underline-slide">{link.label}</span>
+          </a>
+        ))
+      }
+      <ThemeToggle />
+      <a
+        href="#contact"
+        id="nav-cta"
+        class="px-5 py-2.5 text-[11px] font-mono tracking-widest uppercase border border-border bg-text-primary text-bg-primary hover:bg-bg-primary hover:text-text-primary transition-all duration-300 focus-ring"
+      >
+        Let's Talk
+      </a>
+    </div>
+
+    <!-- Mobile Actions -->
+    <div class="flex items-center gap-4 md:hidden">
+      <ThemeToggle />
+      <!-- Mobile Hamburger -->
+      <button
+        id="mobile-menu-btn"
+        class="flex flex-col gap-1.5 p-2 focus-ring cursor-pointer"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="block w-6 h-0.5 bg-text-primary transition-transform duration-300 origin-center" id="burger-top"></span>
+        <span class="block w-6 h-0.5 bg-text-primary transition-opacity duration-300" id="burger-mid"></span>
+        <span class="block w-6 h-0.5 bg-text-primary transition-transform duration-300 origin-center" id="burger-bot"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Overlay -->
+  <div
+    id="mobile-menu"
+    class="md:hidden fixed inset-x-0 top-[57px] bottom-0 bg-bg-primary/95 backdrop-blur-lg flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-opacity duration-300 border-b border-border"
+  >
+    {
+      navLinks.map((link) => (
+        <a
+          href={link.href}
+          class="mobile-nav-link text-xl font-mono tracking-widest text-text-secondary hover:text-text-primary transition-colors flex items-center gap-2"
+        >
+          <span class="text-text-muted">{link.num}.</span>
+          <span>{link.label}</span>
+        </a>
+      ))
+    }
+    <a
+      href="#contact"
+      class="mt-4 px-8 py-3 text-sm font-mono tracking-widest uppercase border border-border bg-text-primary text-bg-primary hover:bg-bg-primary hover:text-text-primary transition-all duration-300"
+    >
+      Let's Talk
+    </a>
+  </div>
+</nav>
+
+<!-- Nav scroll effect + mobile toggle -->
+<script>
+  const nav = document.getElementById("main-nav")!;
+  const btn = document.getElementById("mobile-menu-btn")!;
+  const menu = document.getElementById("mobile-menu")!;
+  const burgerTop = document.getElementById("burger-top")!;
+  const burgerMid = document.getElementById("burger-mid")!;
+  const burgerBot = document.getElementById("burger-bot")!;
+  let isOpen = false;
+
+  // Scroll — add glass background
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 50) {
+      nav.classList.add("glass", "shadow-lg");
+    } else {
+      nav.classList.remove("glass", "shadow-lg");
+    }
+  });
+
+  // Mobile toggle
+  btn.addEventListener("click", () => {
+    isOpen = !isOpen;
+    menu.classList.toggle("opacity-0", !isOpen);
+    menu.classList.toggle("pointer-events-none", !isOpen);
+
+    // Animate hamburger → X
+    burgerTop.style.transform = isOpen ? "rotate(45deg) translate(4px, 4px)" : "";
+    burgerMid.style.opacity = isOpen ? "0" : "1";
+    burgerBot.style.transform = isOpen ? "rotate(-45deg) translate(4px, -4px)" : "";
+  });
+
+  // Close on link click
+  menu.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      isOpen = false;
+      menu.classList.add("opacity-0", "pointer-events-none");
+      burgerTop.style.transform = "";
+      burgerMid.style.opacity = "1";
+      burgerBot.style.transform = "";
+    });
+  });
+</script>

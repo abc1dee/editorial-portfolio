@@ -1,0 +1,61 @@
+---
+import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import AboutSection from '../components/AboutSection.astro';
+import ContactSection from '../components/ContactSection.astro';
+import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects'))
+  .filter((p) => p.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout title="Your Name — Full-Stack Engineer">
+  <Nav />
+  <main>
+    <Hero />
+
+    <!-- Projects Section -->
+    <section id="projects" class="border-b border-border grid md:grid-cols-12 w-full">
+      <!-- Title Column -->
+      <div class="md:col-span-4 p-8 sm:p-12 lg:p-16 border-b md:border-b-0 md:border-r border-border flex flex-col justify-between min-h-[300px]">
+        <div>
+          <div class="reveal font-mono text-[11px] text-text-muted tracking-widest mb-6 flex items-center gap-2">
+            <span class="text-text-primary">02.</span> WORK
+          </div>
+          <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tighter leading-[0.9] mb-8">
+            Selected<br/>Projects
+          </h2>
+        </div>
+        <p class="reveal reveal-delay-2 text-xs text-text-secondary leading-relaxed font-light max-w-xs">
+          A curated selection of systems engineering and product development highlights.
+        </p>
+      </div>
+
+      <!-- Projects Grid Column -->
+      <div class="md:col-span-8 p-8 sm:p-12 lg:p-16 bg-bg-secondary/20">
+        <div class="grid sm:grid-cols-2 gap-6">
+          {projects.map((project, i) => (
+            <ProjectCard
+              title={project.data.title}
+              description={project.data.description}
+              tags={project.data.tags}
+              impact={project.data.impact}
+              href={`/projects/${project.id}`}
+              thumbnail={project.data.thumbnail}
+              index={i}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <AboutSection />
+    <ContactSection />
+  </main>
+  <Footer />
+</BaseLayout>

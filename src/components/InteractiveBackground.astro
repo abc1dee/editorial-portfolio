@@ -1,0 +1,142 @@
+---
+/* InteractiveBackground.astro — Architectural grid blueprint & smoothed crosshair tracker */
+---
+
+<canvas id="interactive-bg" class="fixed inset-0 -z-20 pointer-events-none transition-opacity duration-1000"></canvas>
+
+<script>
+  const canvas = document.getElementById("interactive-bg") as HTMLCanvasElement;
+  if (canvas) {
+    const ctx = canvas.getContext("2d")!;
+    let width = 0;
+    let height = 0;
+    
+    // Mouse tracking & Easing coordinates
+    let mouse = { x: -9999, y: -9999, active: false };
+    let target = { x: -9999, y: -9999 };
+    const ease = 0.1; // Smooth follow inertia
+
+    function resize() {
+      const dpr = window.devicePixelRatio || 1;
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.scale(dpr, dpr);
+    }
+
+    window.addEventListener("resize", resize);
+    resize();
+
+    // Mouse tracking
+    window.addEventListener("mousemove", (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.active = true;
+      if (target.x === -9999) {
+        target.x = mouse.x;
+        target.y = mouse.y;
+      }
+    });
+
+    window.addEventListener("mouseleave", () => {
+      mouse.active = false;
+    });
+
+    // Touch tracking
+    window.addEventListener("touchmove", (e) => {
+      if (e.touches.length > 0) {
+        mouse.x = e.touches[0].clientX;
+        mouse.y = e.touches[0].clientY;
+        mouse.active = true;
+        if (target.x === -9999) {
+          target.x = mouse.x;
+          target.y = mouse.y;
+        }
+      }
+    }, { passive: true });
+
+    window.addEventListener("touchend", () => {
+      mouse.active = false;
+    });
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+
+      const isDark = document.documentElement.classList.contains("dark");
+      
+      // Theme colors
+      const gridColor = isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(9, 9, 11, 0.02)";
+      const crosshairColor = isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(9, 9, 11, 0.05)";
+      const activeCrosshairColor = isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(9, 9, 11, 0.12)";
+      const textColor = isDark ? "rgba(255, 255, 255, 0.35)" : "rgba(9, 9, 11, 0.35)";
+
+      // 1. Draw static background architectural grid (80px squares)
+      const gridSize = 80;
+      ctx.lineWidth = 0.5;
+      ctx.strokeStyle = gridColor;
+
+      for (let xPos = 0; xPos < width; xPos += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(xPos, 0);
+        ctx.lineTo(xPos, height);
+        ctx.stroke();
+      }
+
+      for (let yPos = 0; yPos < height; yPos += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, yPos);
+        ctx.lineTo(width, yPos);
+        ctx.stroke();
+      }
+
+      // 2. Smooth crosshair interpolation
+      if (mouse.active) {
+        target.x += (mouse.x - target.x) * ease;
+        target.y += (mouse.y - target.y) * ease;
+      } else {
+        // Slowly drift off-screen or fade out inertia
+        target.x += (-9999 - target.x) * 0.02;
+        target.y += (-9999 - target.y) * 0.02;
+      }
+
+      // 3. Draw crosshairs if on screen
+      if (target.x > -1000) {
+        // Horizontal crosshair line
+        ctx.beginPath();
+        ctx.strokeStyle = mouse.active ? activeCrosshairColor : crosshairColor;
+        ctx.lineWidth = 0.8;
+        ctx.moveTo(0, target.y);
+        ctx.lineTo(width, target.y);
+        ctx.stroke();
+
+        // Vertical crosshair line
+        ctx.beginPath();
+        ctx.moveTo(target.x, 0);
+        ctx.lineTo(target.x, height);
+        ctx.stroke();
+
+        // Target coordinates label
+        if (mouse.active) {
+          ctx.fillStyle = textColor;
+          ctx.font = "9px 'JetBrains Mono', monospace";
+          
+          const labelText = `LOC: [${Math.round(target.x)}px, ${Math.round(target.y)}px]`;
+          ctx.fillText(labelText, target.x + 12, target.y - 12);
+
+          // Small intersection point
+          ctx.beginPath();
+          ctx.arc(target.x, target.y, 2, 0, Math.PI * 2);
+          ctx.fillStyle = isDark ? "rgba(255, 255, 255, 0.5)" : "rgba(9, 9, 11, 0.5)";
+          ctx.fill();
+        }
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  }
+</script>
