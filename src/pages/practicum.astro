@@ -1,0 +1,1099 @@
+---
+import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const modules = [
+  {
+    id: "dashboard",
+    num: "2.1",
+    title: "Employee Dashboard & Time Clock Widget",
+    tags: ["Frontend", "Backend"],
+    description: "The main landing page for all authenticated users. Features a real-time server clock synced to Philippine Standard Time (GMT+8), the Time at Work widget for clocking in/out, and a Team Calendar displaying approved leaves and events.",
+    features: [
+      "Real-time server time display with active polling",
+      "Status indicator badge (Timed In / Timed Out)",
+      "Latest log entry display with type and timestamp",
+      "Team Calendar with admin event management",
+      "Developer Time Travel controls for local sandbox testing"
+    ],
+    tech: ["Dashboard.vue", "TimeAtWork.vue", "DashboardCalendar.vue", "CalendarController", "AdminCalendarEventController"],
+    mockType: "dashboard"
+  },
+  {
+    id: "auth-2fa",
+    num: "2.2",
+    title: "Authentication & Google Authenticator 2FA",
+    tags: ["Security", "Backend"],
+    description: "A security layer implementing multi-layered authentication: custom login mapping work email, OTP-based and TOTP-based password resets, and a Google Authenticator 2FA setup.",
+    features: [
+      "Custom login with work_email field mapping",
+      "Password reset branching (TOTP vs OTP based on user settings)",
+      "Google Authenticator TOTP setup wizard with QR code and backup keys",
+      "Require2FA middleware blocking access until verification is complete",
+      "2FA settings dashboard for enabling, disabling, and key regeneration"
+    ],
+    tech: ["spomky-labs/otphp", "qrcode.vue", "TwoFactorCode Model", "Require2FA Middleware"],
+    mockType: "auth"
+  },
+  {
+    id: "sso",
+    num: "2.3",
+    title: "Single Sign-On (SSO) Integration & App Management",
+    tags: ["Security", "Backend", "Admin"],
+    description: "A full OAuth2/OIDC-based Single Sign-On system enabling authentication via the BeeConnected identity provider. Includes app management dashboards and granular user access controls.",
+    features: [
+      "Custom Laravel Socialite provider (BeeconnectedProvider.php)",
+      "Redirect-based OAuth2 login with callback processing",
+      "Automatic local user provisioning and updating from profiles",
+      "Admin SSO App manager dashboard (status toggle, user access grids)",
+      "SsoConsent.vue authorization flow screen"
+    ],
+    tech: ["BeeconnectedProvider.php", "SsoApplicationController", "SsoUserAccessManager", "SsoConsent.vue"],
+    mockType: "sso"
+  },
+  {
+    id: "webcam",
+    num: "2.4",
+    title: "Webcam Capture & Photo Verification",
+    tags: ["Frontend", "Security"],
+    description: "Captures a live webcam photo during time clock events to prevent buddy-punching and verify employee attendance logs.",
+    features: [
+      "HTML5 MediaDevices API camera stream access",
+      "Front-facing camera preference at 1280x720 resolution",
+      "Live preview with visual mirror effect",
+      "Bandwidth-optimized JPEG Blob transmission",
+      "Graceful fallback handling for camera access errors"
+    ],
+    tech: ["WebcamCapture.vue", "Private Storage", "Multipart Form Handling"],
+    mockType: "webcam"
+  },
+  {
+    id: "timelogs",
+    num: "2.5",
+    title: "Admin Time Logs & Attendance Monitoring",
+    tags: ["Admin", "Backend"],
+    description: "A comprehensive admin panel providing full visibility into employee time logs with auditable edits and exports.",
+    features: [
+      "Paginated time log table with types, thumbnails, notes, and IPs",
+      "Dynamic filtering by employee, clock type, and date range",
+      "Manual time log adjustments and entries for corrections",
+      "CSV export with active filters preserved",
+      "Soft deletes preserving audit trails"
+    ],
+    tech: ["Admin\\TimeLogController.php", "Eloquent Eager Loading", "CSV Export Layer"],
+    mockType: "timelogs"
+  },
+  {
+    id: "emergency",
+    num: "2.6",
+    title: "Emergency Contacts Module",
+    tags: ["Frontend", "Backend"],
+    description: "Self-service emergency contacts portal with custom Philippine phone formatting and validations.",
+    features: [
+      "Employee-facing CRUD for emergency contact logs",
+      "Philippine mobile format validation (09XX / 639XX rules)",
+      "Philippine landline format validations",
+      "Centralized ValidatesPhilippinePhones validation trait",
+      "Toast notification prompts on updates"
+    ],
+    tech: ["ValidatesPhilippinePhones Trait", "StoreEmergencyContactRequest", "Toast.vue"],
+    mockType: "emergency"
+  },
+  {
+    id: "leaves",
+    num: "2.7",
+    title: "Leave Management Module",
+    tags: ["Frontend", "Backend"],
+    description: "A complete leave request lifecycle system supporting submissions, multi-status workflows, and team calendar highlights.",
+    features: [
+      "Leave request creation with type, range, and reason parameters",
+      "Database-supported half-day leave calculations",
+      "Pending, Approved, Declined lifecycle statuses",
+      "Admin dashboard with bulk approvals and decline notes",
+      "Calendar visualization of approved leaves"
+    ],
+    tech: ["LeaveRequestController", "LeaveRequest Model", "DashboardCalendar.vue"],
+    mockType: "leaves"
+  },
+  {
+    id: "overtime",
+    num: "2.8",
+    title: "Overtime Requests Module",
+    tags: ["Frontend", "Backend"],
+    description: "Allows employees to submit overtime requests for review and gives administrators full approval dashboards.",
+    features: [
+      "Employee overtime request submission (date, hours, justification)",
+      "Cancellation mechanics for pending request entries",
+      "Admin dashboard with quick action approve/decline triggers",
+      "Role-restricted sidebar navigation items"
+    ],
+    tech: ["OvertimeRequestController", "EnsureRole Middleware"],
+    mockType: "overtime"
+  },
+  {
+    id: "timesheets",
+    num: "2.9",
+    title: "Timesheets & Attendance Records",
+    tags: ["Frontend", "Backend"],
+    description: "Dual module for employee timesheet submissions and HR-level manual attendance records.",
+    features: [
+      "Timesheet logging, weekly submissions, and reviewer audits",
+      "HR manual record insertion, updates, and complete deletions",
+      "Dynamic view switching based on employee permissions",
+      "Auditable changes tracking"
+    ],
+    tech: ["TimesheetController", "AttendanceController", "Role-based Navigation"],
+    mockType: "timesheets"
+  },
+  {
+    id: "payroll",
+    num: "2.10",
+    title: "Payroll & Payslip Module",
+    tags: ["Backend", "Admin", "Frontend"],
+    description: "A payroll management suite featuring basic/overtime earnings calculations, government deductions, paid state trackers, and downloads.",
+    features: [
+      "Payroll dashboards detailing payment statuses and quick actions",
+      "Detailed earnings breakdown (Basic, Overtime, Allowances)",
+      "Philippine government deduction logic (SSS, PhilHealth, Pag-IBIG, Tax)",
+      "One-click 'Mark as Paid' status progression",
+      "PDF downloads and CSV spreadsheet exports"
+    ],
+    tech: ["PayslipController", "AdminPayrollController", "EmployeePayslipEarnings", "PDF Renderer"],
+    mockType: "payroll"
+  },
+  {
+    id: "hiring",
+    num: "2.11",
+    title: "Hiring & Careers Module",
+    tags: ["Recruitment", "Frontend", "Backend"],
+    description: "A recruitment workflow system consisting of an internal job board manager, status pipeline columns, and a public-facing careers page.",
+    features: [
+      "Job listing CRUD with status triggers and stats cards",
+      "Recruitment pipeline (Pending → Reviewed → HR Interview → Accepted/Rejected)",
+      "Inline resume viewer supporting PDF streams with DOCX fallback",
+      "Public careers page showing active listings with application forms",
+      "Rate-limited submit throttling to prevent spam submissions"
+    ],
+    tech: ["HiringController", "CareerController", "GuestCareerLayout", "Throttle Middleware"],
+    mockType: "hiring"
+  },
+  {
+    id: "directory",
+    num: "2.12",
+    title: "Employee Directory",
+    tags: ["Frontend", "Admin"],
+    description: "A company-wide searchable profile directory featuring department filters and privileged status markers.",
+    features: [
+      "Grid layout of searchable employee profile cards",
+      "Department and office location drop-down filters",
+      "Role-based avatar frames (crowns, shields, standard rings)",
+      "Terminated visibility toggles (admin-only) with greyed layouts",
+      "Direct email and phone quick-link buttons"
+    ],
+    tech: ["DirectoryController", "isPrivileged Props", "User Model"],
+    mockType: "directory"
+  },
+  {
+    id: "executive",
+    num: "2.13",
+    title: "Executive Dashboard & Super Admin Controls",
+    tags: ["Admin", "Security", "Backend"],
+    description: "A privileged command center offering company statistics, role modifiers, system-wide configuration, and audit logs.",
+    features: [
+      "Company counts overview dashboard (Employees, Users, Leaves, Overtime)",
+      "Granular user role and manager assignment controls",
+      "System config toggles and environmental setting displays",
+      "Auditing timelines tracking system-wide activity details"
+    ],
+    tech: ["EnsureRole Middleware", "SystemConfigController", "AuditLogController", "spatie/laravel-activitylog"],
+    mockType: "executive"
+  },
+  {
+    id: "employee-crud",
+    num: "2.14",
+    title: "Employee Management (Admin CRUD)",
+    tags: ["Admin", "Backend"],
+    description: "An HR admin dashboard to register, update, terminate, and delete employee files through validation steps.",
+    features: [
+      "Comprehensive employee onboarding forms with validation checks",
+      "Employee file updates (personal info, 2FA states, core status)",
+      "Guided wizard overlays and modal confirmation overlays",
+      "Soft-deletes and termination record preservation rules"
+    ],
+    tech: ["EmployeeManagementController", "CreateEmployee.vue", "CreateEmployeeModal.vue"],
+    mockType: "crud"
+  },
+  {
+    id: "layout-nav",
+    num: "2.15",
+    title: "Application Layout & Collapsible Navigation",
+    tags: ["Frontend"],
+    description: "The global authenticated app shell providing sidebar navigations, instant shortcuts, and global notifications.",
+    features: [
+      "Collapsible sidebar linking brand assets and sites",
+      "Universal module search to navigate views quickly",
+      "Role-filtered menu generation with expandable sub-links",
+      "Global toast stack triggers for action confirmations",
+      "Fully responsive responsive wrapper layouts"
+    ],
+    tech: ["ToastContainer.vue", "SidebarNav.vue", "Inertia Layouts"],
+    mockType: "layout"
+  }
+];
+
+const journalWeeks = [
+  {
+    week: "Week 1",
+    dates: "Apr 27 – May 01",
+    summary: "Onboarding and orientation. Local environment setup (PHP, MySQL, Composer, Node.js). Cloning the BeeConnected repository and running initial migrations.",
+    learnings: "Local stack configuration, git workflows, repository onboarding."
+  },
+  {
+    week: "Week 2",
+    dates: "May 04 – May 08",
+    summary: "Studying the existing codebase architecture. Analyzing routes/web.php, middleware structure, and Inertia rendering flow. Building the custom login controller with work_email mapping.",
+    learnings: "Inertia routing, custom authentication fields mapping, Laravel controllers."
+  },
+  {
+    week: "Week 3",
+    dates: "May 11 – May 15",
+    summary: "Researching TOTP algorithms and the spomky-labs/otphp library. Designing the TwoFactorCode model and migration. Beginning 2FA setup page development.",
+    learnings: "TOTP encryption theories, database migrations design, Eloquent model scoping."
+  },
+  {
+    week: "Week 4",
+    dates: "May 18 – May 22",
+    summary: "Completing the 2FA Setup wizard: QR code generation with qrcode.vue, backup secret key display, 6-digit verification input. Implementing enable/disable/regenerate actions.",
+    learnings: "Vue 3 reactive setups, QR rendering pipelines, state toggle actions."
+  },
+  {
+    week: "Week 5",
+    dates: "May 25 – May 29",
+    summary: "Developing Require2FA middleware. Building password reset flow branching (TOTP vs OTP). Integrating 2FA enforcement into all authenticated route groups.",
+    learnings: "Middleware interception logic, authentication state routing."
+  },
+  {
+    week: "Week 6",
+    dates: "Jun 01 – Jun 05",
+    summary: "Designing the Emergency Contacts database schema. Creating Eloquent model, migration, and form request validation classes. Building the ValidatesPhilippinePhones trait.",
+    learnings: "Form requests validation layers, PHP traits implementation, regex validation rules."
+  },
+  {
+    week: "Week 7",
+    dates: "Jun 08 – Jun 12",
+    summary: "Completing emergency contacts CRUD (employee and admin sides). Implementing Toast.vue notification component. Developing the admin emergency contacts management view.",
+    learnings: "Full CRUD cycles, global UI component states, admin scope validation."
+  },
+  {
+    week: "Week 8",
+    dates: "Jun 15 – Jun 19",
+    summary: "Designing the time_logs table schema. Building TimeLogController and TimeLogRequest validation. Implementing clock-in/out backend logic with server-set timestamps.",
+    learnings: "Timestamp synchronization, database integrity, controller route mappings."
+  },
+  {
+    week: "Week 9",
+    dates: "Jun 22 – Jun 26",
+    summary: "Developing WebcamCapture.vue with HTML5 MediaDevices API. Building TimeClockWidget.vue and TimeClockModal.vue. Testing camera constraints across browsers.",
+    learnings: "HTML5 camera access, media stream handling, browser support checks."
+  },
+  {
+    week: "Week 10",
+    dates: "Jun 29 – Jul 03",
+    summary: "Integrating secure private storage for time log photos. Building admin time log management (list, detail, edit, delete, CSV export, statistics). Implementing leave management and overtime request modules.",
+    learnings: "Laravel storage system, security guidelines, CSV data streams, N+1 query troubleshooting."
+  },
+  {
+    week: "Week 11",
+    dates: "Jul 06 – Jul 10",
+    summary: "Developing the Payroll dashboard and Payslip module (admin CRUD, earnings/deductions, mark-paid, PDF export). Building SSO integration with custom Socialite provider and SSO app management.",
+    learnings: "Payroll math validation, DOM-to-PDF drivers, custom OAuth2 drivers, pivot relations."
+  },
+  {
+    week: "Week 12",
+    dates: "Jul 13 – Jul 17",
+    summary: "Implementing the Hiring module (job listings CRUD, applications pipeline, resume viewer) and public Careers page. Building the Employee Directory with role-based avatars. Developing the Executive Dashboard and controls.",
+    learnings: "Kanban pipeline designs, public Guest routers, role asset logic, admin dashboards."
+  },
+  {
+    week: "Week 13",
+    dates: "Jul 20 – Jul 24",
+    summary: "System integration testing and edge case resolution. Writing technical documentation (architecture reviews, deployment checklists, turnover notes). Final code review and internship handback.",
+    learnings: "E2E verification, QA processes, Technical documentation, handover procedures."
+  }
+];
+
+const tagsList = ["All", "Backend", "Frontend", "Security", "Admin", "Recruitment"];
+---
+
+<BaseLayout title="Practicum Narrative Report — Software Engineering">
+  <Nav />
+  
+  <main class="w-full">
+    <!-- Hero Section -->
+    <header class="border-b border-border p-8 sm:p-12 lg:p-16 flex flex-col justify-center items-start text-left min-h-[40vh] bg-bg-secondary/10">
+      <div class="reveal font-mono text-[11px] text-text-muted tracking-widest mb-6 flex items-center gap-2">
+        <span class="text-text-primary">02.</span> PRACTICUM
+      </div>
+      <h1 class="reveal reveal-delay-1 text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tighter leading-[0.95] max-w-4xl mb-6">
+        Internship Narrative Report
+      </h1>
+      <p class="reveal reveal-delay-2 text-base text-text-secondary max-w-2xl leading-relaxed font-light">
+        A comprehensive review of the 480-hour Software Engineering Practicum at PurpleBug Inc., developing the BeeConnected Human Resource Information System (HRIS).
+      </p>
+    </header>
+
+    <!-- Key Metrics Dashboard Grid -->
+    <section class="border-b border-border grid grid-cols-2 md:grid-cols-5 divide-y md:divide-y-0 md:divide-x divide-border bg-bg-secondary/5 font-mono text-[11px]">
+      <div class="p-6 flex flex-col gap-1.5 justify-center">
+        <span class="text-text-muted uppercase tracking-wider">Intern</span>
+        <span class="text-text-primary font-bold text-xs uppercase">[Your Name]</span>
+      </div>
+      <div class="p-6 flex flex-col gap-1.5 justify-center">
+        <span class="text-text-muted uppercase tracking-wider">Company</span>
+        <span class="text-text-primary font-bold text-xs">PurpleBug Inc.</span>
+      </div>
+      <div class="p-6 flex flex-col gap-1.5 justify-center">
+        <span class="text-text-muted uppercase tracking-wider">Duration</span>
+        <span class="text-text-primary font-bold text-xs">Apr 27 – Jul 24, 2026</span>
+      </div>
+      <div class="p-6 flex flex-col gap-1.5 justify-center">
+        <span class="text-text-muted uppercase tracking-wider">Hours Rendered</span>
+        <span class="text-text-primary font-bold text-xs text-accent">480 / 480 Hours</span>
+      </div>
+      <div class="p-6 flex flex-col gap-1.5 justify-center col-span-2 md:col-span-1">
+        <span class="text-text-muted uppercase tracking-wider">Core Tech</span>
+        <span class="text-text-primary font-bold text-[10px] truncate">Laravel 12, Vue 3, Tailwind 4</span>
+      </div>
+    </section>
+
+    <!-- Main Content Layout -->
+    <section class="grid md:grid-cols-12 w-full min-h-screen relative">
+      <!-- Sticky Sidebar Table of Contents -->
+      <aside class="md:col-span-3 border-b md:border-b-0 md:border-r border-border p-6 lg:p-8 md:sticky md:top-[57px] md:h-[calc(100vh-57px)] overflow-y-auto">
+        <div class="flex flex-col gap-8 h-full justify-between">
+          <div class="flex flex-col gap-6">
+            <span class="font-mono text-[10px] text-text-muted tracking-widest uppercase">Navigation</span>
+            <ul class="flex flex-row md:flex-col gap-4 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 font-mono text-[11px] tracking-wider uppercase">
+              <li>
+                <a href="#overview" class="toc-link text-text-secondary hover:text-text-primary transition-colors flex items-center gap-2 active">
+                  <span class="text-text-muted">1.0</span> Overview
+                </a>
+              </li>
+              <li>
+                <a href="#outputs" class="toc-link text-text-secondary hover:text-text-primary transition-colors flex items-center gap-2">
+                  <span class="text-text-muted">2.0</span> Output Modules
+                </a>
+              </li>
+              <li>
+                <a href="#synthesis" class="toc-link text-text-secondary hover:text-text-primary transition-colors flex items-center gap-2">
+                  <span class="text-text-muted">3.0</span> Synthesis
+                </a>
+              </li>
+              <li>
+                <a href="#journal" class="toc-link text-text-secondary hover:text-text-primary transition-colors flex items-center gap-2">
+                  <span class="text-text-muted">4.0</span> Weekly Journal
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div class="hidden md:flex flex-col gap-3 p-4 border border-border bg-bg-secondary/40 font-mono text-[10px] leading-relaxed">
+            <span class="text-text-primary font-bold">BeeConnected HRIS</span>
+            <p class="text-text-muted">Developed to streamline enterprise core operations from authentication and biometric verifications to payroll management and hiring pipelines.</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Scrollable Content -->
+      <div class="md:col-span-9 p-6 sm:p-12 lg:p-16 space-y-24 overflow-x-hidden">
+        
+        <!-- SECTION 1.0 OVERVIEW -->
+        <article id="overview" class="space-y-12 scroll-mt-24">
+          <div class="border-b border-border pb-6 flex items-baseline justify-between">
+            <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tight">1.0 Overview of Practicum</h2>
+            <span class="font-mono text-xs text-text-muted">PurpleBug Inc.</span>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-8 text-sm leading-relaxed font-light text-text-secondary">
+            <div class="space-y-4">
+              <h3 class="font-mono text-xs font-bold text-text-primary uppercase tracking-wider">Company Background</h3>
+              <p>
+                <strong>PurpleBug Inc.</strong> is a technology-first, data-driven marketing technology company founded in 2011. Headquartered in Makati City, Philippines, PurpleBug specializes in providing a combined solution of strategy and technology to help businesses integrate their sales, marketing, customer service, and IT operations.
+              </p>
+              <p>
+                Beyond digital marketing and SEO services, PurpleBug operates as an enterprise software solutions provider, developing proprietary platforms like Smicos (chatbot), DocuMeant (DMS), Zagidee (PM), OnTarget (Sales), and <strong>BeeConnected</strong> (HRIS).
+              </p>
+            </div>
+            <div class="space-y-4">
+              <h3 class="font-mono text-xs font-bold text-text-primary uppercase tracking-wider font-semibold">Assignments & Nature of Tasks</h3>
+              <p>
+                As a Software Engineering Intern, the primary assignment was to develop, enhance, and maintain core backend and frontend modules for the <strong>BeeConnected</strong> HRIS portal — an enterprise-grade employee management system built on <strong>Laravel 12, Vue 3, Inertia.js, and Tailwind CSS 4</strong>.
+              </p>
+              <p>
+                Key responsibilities spanned 13 major feature areas including SSO Authentication, emergency contact phone validations, webcam-based photo check-ins, automated leave rules, payroll net pay algorithms, recruitment pipeline controls, and admin management CRUDs.
+              </p>
+            </div>
+          </div>
+
+          <!-- Product Grid Table -->
+          <div class="border border-border">
+            <div class="bg-bg-secondary/40 border-b border-border p-4 font-mono text-xs text-text-primary uppercase font-bold tracking-wider">
+              PurpleBug Proprietary Products
+            </div>
+            <div class="grid divide-y divide-border font-mono text-[11px]">
+              <div class="grid grid-cols-3 p-4 bg-bg-primary">
+                <span class="text-text-primary font-bold">Smicos</span>
+                <span class="col-span-2 text-text-secondary">AI-powered chatbot platform</span>
+              </div>
+              <div class="grid grid-cols-3 p-4 bg-bg-secondary/10">
+                <span class="text-text-primary font-bold">DocuMeant</span>
+                <span class="col-span-2 text-text-secondary">Document management system</span>
+              </div>
+              <div class="grid grid-cols-3 p-4 bg-bg-primary">
+                <span class="text-text-primary font-bold">Zagidee</span>
+                <span class="col-span-2 text-text-secondary">Project management tool</span>
+              </div>
+              <div class="grid grid-cols-3 p-4 bg-bg-secondary/10">
+                <span class="text-text-primary font-bold">OnTarget</span>
+                <span class="col-span-2 text-text-secondary">Sales performance tracking tool</span>
+              </div>
+              <div class="grid grid-cols-3 p-4 bg-bg-primary text-accent">
+                <span class="font-bold">BeeConnected</span>
+                <span class="col-span-2 text-text-secondary font-bold">Human Resource Information System (HRIS)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tech Stack Categories -->
+          <div class="space-y-6">
+            <h3 class="font-mono text-xs font-bold text-text-primary uppercase tracking-wider">Technology Stack Profile</h3>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="border border-border p-5 flex flex-col justify-between min-h-[140px] hover:border-text-muted transition-colors">
+                <span class="font-mono text-[10px] text-text-muted uppercase">Backend</span>
+                <div class="mt-4">
+                  <span class="text-sm font-bold text-text-primary block">Laravel 12</span>
+                  <span class="text-xs text-text-secondary font-mono">PHP 8.2+, MySQL</span>
+                </div>
+              </div>
+              <div class="border border-border p-5 flex flex-col justify-between min-h-[140px] hover:border-text-muted transition-colors">
+                <span class="font-mono text-[10px] text-text-muted uppercase">Frontend</span>
+                <div class="mt-4">
+                  <span class="text-sm font-bold text-text-primary block">Vue 3 / Inertia.js</span>
+                  <span class="text-xs text-text-secondary font-mono">Vite 7, Ziggy Routing</span>
+                </div>
+              </div>
+              <div class="border border-border p-5 flex flex-col justify-between min-h-[140px] hover:border-text-muted transition-colors">
+                <span class="font-mono text-[10px] text-text-muted uppercase">Styling</span>
+                <div class="mt-4">
+                  <span class="text-sm font-bold text-text-primary block">Tailwind CSS 4</span>
+                  <span class="text-xs text-text-secondary font-mono">Modern CSS compiler</span>
+                </div>
+              </div>
+              <div class="border border-border p-5 flex flex-col justify-between min-h-[140px] hover:border-text-muted transition-colors">
+                <span class="font-mono text-[10px] text-text-muted uppercase">Security & Libs</span>
+                <div class="mt-4">
+                  <span class="text-sm font-bold text-text-primary block">2FA, SSO OAuth2</span>
+                  <span class="text-xs text-text-secondary font-mono">OTPHP, Activity Log</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- SECTION 2.0 OUTPUT MODULES -->
+        <article id="outputs" class="space-y-12 scroll-mt-24">
+          <div class="border-b border-border pb-6 flex items-baseline justify-between">
+            <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tight">2.0 Presentation of Output</h2>
+            <span class="font-mono text-xs text-text-muted">15 System Modules</span>
+          </div>
+
+          <p class="text-sm leading-relaxed font-light text-text-secondary">
+            Over the 480-hour practicum engagement, the following modules were designed, developed, and integrated into the BeeConnected HRIS enterprise platform.
+          </p>
+
+          <!-- Interactive Filters -->
+          <div class="flex flex-wrap gap-2 py-2 border-y border-border/80 font-mono text-[10px] items-center">
+            <span class="text-text-muted uppercase tracking-wider mr-2">Filter Modules:</span>
+            {tagsList.map(tag => (
+              <button
+                class={`px-3 py-1.5 border border-border hover:border-text-primary hover:text-text-primary transition-all duration-200 cursor-pointer module-filter-btn uppercase ${tag === 'All' ? 'bg-text-primary text-bg-primary border-text-primary' : 'text-text-secondary bg-transparent'}`}
+                data-tag={tag.toLowerCase()}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+
+          <!-- Modules Container -->
+          <div class="grid gap-12" id="modules-list">
+            {modules.map((m) => (
+              <div
+                class="module-card border border-border p-6 sm:p-8 space-y-6 bg-bg-secondary/10 transition-all duration-300 hover:border-text-muted"
+                data-tags={m.tags.map(t => t.toLowerCase()).join(',')}
+              >
+                <!-- Card Header -->
+                <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 border-b border-border pb-4">
+                  <div class="flex items-center gap-3">
+                    <span class="font-mono text-xs font-bold text-accent">{m.num}</span>
+                    <h3 class="text-lg font-bold text-text-primary uppercase tracking-tight leading-none">{m.title}</h3>
+                  </div>
+                  <div class="flex gap-2.5">
+                    {m.tags.map(tag => (
+                      <span class="font-mono text-[9px] uppercase border border-border px-2 py-0.5 text-text-muted bg-bg-primary">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <!-- Description & Features -->
+                <div class="grid lg:grid-cols-2 gap-8">
+                  <div class="space-y-4">
+                    <p class="text-xs sm:text-sm text-text-secondary leading-relaxed font-light">
+                      {m.description}
+                    </p>
+                    
+                    <div class="space-y-2">
+                      <span class="font-mono text-[10px] text-text-muted uppercase tracking-wider block">Key Features Implemented:</span>
+                      <ul class="space-y-1.5 text-xs text-text-secondary">
+                        {m.features.map(f => (
+                          <li class="flex items-start gap-2 font-light">
+                            <span class="text-text-primary font-mono text-[9px] mt-0.5">•</span>
+                            <span>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1.5 pt-2">
+                      <span class="font-mono text-[9px] text-text-muted uppercase tracking-wider mr-1 mt-1 block">Tech Context:</span>
+                      {m.tech.map(t => (
+                        <code class="font-mono text-[9px] border border-border bg-bg-secondary px-1.5 py-0.5 text-text-secondary rounded-sm">
+                          {t}
+                        </code>
+                      ))}
+                    </div>
+                  </div>
+
+                  <!-- Mock Screenshots / Placeholders -->
+                  <div class="flex items-center justify-center">
+                    <div class="w-full border border-border bg-bg-card font-mono text-[11px] text-text-secondary select-none overflow-hidden relative shadow-inner">
+                      <!-- Mock Header -->
+                      <div class="flex items-center justify-between px-4 py-2.5 bg-bg-secondary/90 border-b border-border">
+                        <div class="flex items-center gap-1.5">
+                          <span class="w-2 h-2 border border-border bg-transparent"></span>
+                          <span class="w-2 h-2 border border-border bg-transparent"></span>
+                          <span class="w-2 h-2 border border-border bg-transparent"></span>
+                        </div>
+                        <span class="text-[9px] text-text-muted font-bold tracking-wider uppercase">System View: {m.id}</span>
+                        <div class="w-6"></div>
+                      </div>
+
+                      <!-- Mock Viewport -->
+                      <div class="p-6 bg-bg-secondary/5 aspect-[16/9] flex flex-col justify-between relative overflow-hidden text-center items-center">
+                        <!-- BG grid details -->
+                        <div class="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
+                        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-text-primary/5 to-transparent pointer-events-none bg-[length:100%_4px] opacity-10"></div>
+                        
+                        <!-- Top status -->
+                        <div class="w-full flex justify-between text-[9px] text-text-muted uppercase tracking-widest border-b border-border pb-1">
+                          <span>Connection: SECURE</span>
+                          <span>BEECONNECTED_PORTAL_V1</span>
+                        </div>
+
+                        <!-- Main content mockup based on Type -->
+                        {m.mockType === "dashboard" && (
+                          <div class="w-full max-w-sm space-y-4 my-auto">
+                            <div class="border border-border p-4 bg-bg-primary text-left relative">
+                              <span class="text-[8px] text-text-muted uppercase absolute top-2 right-2">CLOCK WIDGET</span>
+                              <div class="text-xl font-bold text-accent tracking-widest">08:00:00 AM</div>
+                              <div class="text-[9px] text-text-secondary mt-1">PHILIPPINE STANDARD TIME (GMT+8)</div>
+                              <div class="mt-3 flex gap-2">
+                                <span class="px-3 py-1 bg-text-primary text-bg-primary text-[9px] font-bold">CLOCK IN</span>
+                                <span class="px-3 py-1 border border-border text-[9px] text-text-muted">CLOCK OUT</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {m.mockType === "auth" && (
+                          <div class="w-full max-w-xs space-y-3 my-auto">
+                            <div class="border border-border p-4 bg-bg-primary text-left space-y-3">
+                              <div class="text-center font-bold text-xs uppercase text-text-primary">2FA AUTHENTICATOR SETUP</div>
+                              <div class="flex items-center gap-4 py-2 border-y border-border">
+                                <div class="w-12 h-12 border border-border border-dashed flex items-center justify-center font-bold text-lg text-text-muted">[QR]</div>
+                                <div class="text-[9px] text-text-secondary">Scan this QR in Google Authenticator or enter backup code: <span class="font-bold text-text-primary font-mono block">JBSWY3DPEHPK3PXP</span></div>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                <span class="text-[9px] text-text-secondary uppercase">Code:</span>
+                                <div class="h-6 flex-grow border border-border bg-bg-secondary p-1 flex items-center justify-center font-bold tracking-widest">[ _ _ _  _ _ _ ]</div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {m.mockType === "sso" && (
+                          <div class="w-full max-w-sm space-y-3 my-auto">
+                            <div class="border border-border p-4 bg-bg-primary text-left space-y-3">
+                              <div class="text-xs font-bold text-text-primary flex justify-between items-center border-b border-border pb-1.5">
+                                <span>SSO App Registrations</span>
+                                <span class="px-2 py-0.5 bg-accent/10 text-accent text-[8px] border border-accent/20">ADMIN ONLY</span>
+                              </div>
+                              <div class="space-y-1.5">
+                                <div class="flex justify-between items-center text-[9px] border border-border p-1 bg-bg-secondary/40">
+                                  <span>[App] DocuMeant DMS</span>
+                                  <span class="text-accent">● ENABLED</span>
+                                </div>
+                                <div class="flex justify-between items-center text-[9px] border border-border p-1 bg-bg-secondary/40">
+                                  <span>[App] Zagidee PM</span>
+                                  <span class="text-accent">● ENABLED</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {m.mockType === "webcam" && (
+                          <div class="w-full max-w-sm space-y-2 my-auto">
+                            <div class="border border-border aspect-[16/10] bg-bg-primary flex flex-col justify-between p-3 relative">
+                              <div class="absolute inset-0 border border-red-500/20 pointer-events-none flex items-center justify-center">
+                                <div class="w-32 h-32 border border-dashed border-red-500/40 rounded-full flex items-center justify-center">
+                                  <span class="text-[8px] text-red-500/40">ALIGN FACE</span>
+                                </div>
+                              </div>
+                              <span class="text-[8px] text-text-muted">WEBCAM_STREAM (1280x720)</span>
+                              <div class="flex justify-between items-center text-[8px]">
+                                <span class="text-red-500">● LIVE FEED</span>
+                                <span class="bg-red-500 text-white px-2 py-0.5">CAPTURE</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {m.mockType === "timelogs" && (
+                          <div class="w-full max-w-sm space-y-2 my-auto">
+                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2">
+                              <div class="text-[9px] font-bold text-text-primary flex justify-between border-b border-border pb-1">
+                                <span>Recent Time Logs</span>
+                                <span>Total: 480hr</span>
+                              </div>
+                              <table class="w-full text-[8px] text-text-secondary border-collapse">
+                                <thead>
+                                  <tr class="border-b border-border">
+                                    <th class="text-left font-bold py-1">Employee</th>
+                                    <th class="text-left font-bold py-1">Type</th>
+                                    <th class="text-right font-bold py-1">Time</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr class="border-b border-border/40">
+                                    <td class="py-1">John Doe</td>
+                                    <td class="text-green-500 py-1">Clock In</td>
+                                    <td class="text-right py-1">08:00 AM</td>
+                                  </tr>
+                                  <tr>
+                                    <td class="py-1">Jane Smith</td>
+                                    <td class="text-red-400 py-1">Clock Out</td>
+                                    <td class="text-right py-1">05:00 PM</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        )}
+
+                        {m.mockType === "emergency" && (
+                          <div class="w-full max-w-sm space-y-2 my-auto">
+                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2">
+                              <div class="text-[9px] font-bold text-text-primary border-b border-border pb-1">EMERGENCY CONTACT SCHEMA</div>
+                              <div class="space-y-1.5 text-[8px]">
+                                <div>Name: <span class="text-text-primary">[Input Text]</span></div>
+                                <div>Relationship: <span class="text-text-primary">[Select dropdown]</span></div>
+                                <div>Mobile: <span class="text-text-primary font-mono">+63 917 123 4567</span> <span class="text-green-500">✓ VALID</span></div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {m.mockType === "leaves" && (
+                          <div class="w-full max-w-sm space-y-2 my-auto">
+                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2">
+                              <div class="text-[9px] font-bold text-text-primary border-b border-border pb-1 flex justify-between">
+                                <span>Leave History</span>
+                                <span class="text-accent font-bold">New Request +</span>
+                              </div>
+                              <div class="flex justify-between items-center text-[8px] border border-border p-1 bg-bg-secondary/40">
+                                <span>Sick Leave (2 Days)</span>
+                                <span class="px-1.5 py-0.5 bg-green-500/10 text-green-500 border border-green-500/20">APPROVED</span>
+                              </div>
+                              <div class="flex justify-between items-center text-[8px] border border-border p-1 bg-bg-secondary/40">
+                                <span>Vacation (1 Day)</span>
+                                <span class="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">PENDING</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {m.mockType === "payroll" && (
+                          <div class="w-full max-w-sm space-y-2 my-auto">
+                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2 font-mono">
+                              <div class="text-[9px] font-bold text-text-primary border-b border-border pb-1 flex justify-between">
+                                <span>PAYSLIP DETAILS</span>
+                                <span class="text-accent font-bold">PDF</span>
+                              </div>
+                              <div class="space-y-1 text-[8px] text-text-secondary">
+                                <div class="flex justify-between"><span>Basic Salary:</span><span class="text-text-primary font-bold">₱45,000.00</span></div>
+                                <div class="flex justify-between"><span>Total Deductions:</span><span class="text-red-400 font-bold">-₱4,820.00</span></div>
+                                <div class="flex justify-between border-t border-border pt-1 font-bold text-text-primary">
+                                  <span>NET PAY:</span><span class="text-accent">₱40,180.00</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {m.mockType === "hiring" && (
+                          <div class="w-full max-w-sm space-y-2 my-auto">
+                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2">
+                              <div class="text-[9px] font-bold text-text-primary border-b border-border pb-1">HIRING PIPELINE BOARDS</div>
+                              <div class="grid grid-cols-3 gap-1.5 text-[7px] text-text-secondary">
+                                <div class="border border-border p-1 bg-bg-secondary">
+                                  <span class="font-bold text-text-primary block border-b border-border pb-0.5 mb-1">PENDING (5)</span>
+                                  <span>Jane Doe (CV)</span>
+                                </div>
+                                <div class="border border-border p-1 bg-bg-secondary">
+                                  <span class="font-bold text-text-primary block border-b border-border pb-0.5 mb-1">INTERVIEW (2)</span>
+                                  <span>Bob Smith</span>
+                                </div>
+                                <div class="border border-border p-1 bg-bg-secondary">
+                                  <span class="font-bold text-text-primary block border-b border-border pb-0.5 mb-1">HIRED (1)</span>
+                                  <span class="text-green-500">Alice Green</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {m.mockType === "directory" && (
+                          <div class="w-full max-w-sm space-y-2 my-auto">
+                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2">
+                              <div class="text-[9px] font-bold text-text-primary border-b border-border pb-1">Search Directory</div>
+                              <div class="grid grid-cols-2 gap-2 text-[8px]">
+                                <div class="border border-border p-2 flex items-center gap-2 bg-bg-secondary/40">
+                                  <div class="w-5 h-5 border border-border bg-accent/5 rounded-full flex items-center justify-center text-[7px] font-bold text-accent">👑</div>
+                                  <div>
+                                    <div class="font-bold text-text-primary">Admin User</div>
+                                    <div class="text-text-muted text-[6px]">System Admin</div>
+                                  </div>
+                                </div>
+                                <div class="border border-border p-2 flex items-center gap-2 bg-bg-secondary/40">
+                                  <div class="w-5 h-5 border border-border bg-text-muted/5 rounded-full flex items-center justify-center text-[7px] font-bold text-text-muted">👤</div>
+                                  <div>
+                                    <div class="font-bold text-text-primary">Staff Member</div>
+                                    <div class="text-text-muted text-[6px]">Developer</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {m.mockType === "executive" && (
+                          <div class="w-full max-w-sm space-y-2 my-auto">
+                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2">
+                              <div class="text-[9px] font-bold text-text-primary border-b border-border pb-1">EXECUTIVE OVERVIEW</div>
+                              <div class="grid grid-cols-3 gap-2 text-center text-text-secondary">
+                                <div class="border border-border p-1">
+                                  <span class="text-[12px] font-bold text-text-primary block">104</span>
+                                  <span class="text-[6px] text-text-muted uppercase">EMPLOYEES</span>
+                                </div>
+                                <div class="border border-border p-1">
+                                  <span class="text-[12px] font-bold text-text-primary block">3</span>
+                                  <span class="text-[6px] text-text-muted uppercase">PENDING LEAVES</span>
+                                </div>
+                                <div class="border border-border p-1">
+                                  <span class="text-[12px] font-bold text-text-primary block">1,824</span>
+                                  <span class="text-[6px] text-text-muted uppercase">AUDITS</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {m.mockType === "crud" && (
+                          <div class="w-full max-w-sm space-y-2 my-auto">
+                            <div class="border border-border p-3 bg-bg-primary text-left space-y-1.5 text-[8px]">
+                              <div class="font-bold text-text-primary border-b border-border pb-1">CREATE NEW EMPLOYEE</div>
+                              <div>First Name: <span class="text-text-muted">Enter first name...</span></div>
+                              <div>Last Name: <span class="text-text-muted">Enter last name...</span></div>
+                              <div class="border-t border-border pt-1 flex justify-end gap-1.5">
+                                <span class="border border-border px-2 py-0.5 text-text-muted">Cancel</span>
+                                <span class="bg-text-primary text-bg-primary px-2 py-0.5 font-bold">Submit</span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {m.mockType === "layout" && (
+                          <div class="w-full max-w-sm space-y-2 my-auto">
+                            <div class="border border-border p-2 bg-bg-primary text-left flex gap-2 aspect-[16/8]">
+                              <div class="w-16 border-r border-border pr-2 flex flex-col gap-1 text-[7px] text-text-secondary">
+                                <span class="font-bold text-text-primary border-b border-border pb-0.5 mb-1">BEECONNECTED</span>
+                                <span class="text-accent font-bold">Dashboard</span>
+                                <span>My Info</span>
+                                <span>Timesheets</span>
+                                <span>Leave Mgmt</span>
+                              </div>
+                              <div class="flex-grow flex flex-col justify-between text-[7px]">
+                                <div class="flex justify-between border-b border-border pb-1">
+                                  <span class="font-bold text-text-primary">Dashboard</span>
+                                  <span class="text-text-muted">Search...</span>
+                                </div>
+                                <div class="text-[6px] text-text-muted">Main portal content space...</div>
+                                <div class="w-full bg-text-primary/10 border border-text-primary/20 text-text-primary p-1">Toast: Success!</div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {!m.mockType && (
+                          <div class="my-auto space-y-2">
+                            <span class="text-text-muted text-[10px] uppercase font-bold tracking-widest block">[ SCREENSHOT PLACEHOLDER ]</span>
+                            <span class="text-[9px] text-text-secondary italic max-w-[200px] block mx-auto font-light">
+                              Alt: Representative screenshot of the {m.title} interface showing dynamic layout components.
+                            </span>
+                          </div>
+                        )}
+
+                        <!-- Bottom status -->
+                        <div class="w-full flex justify-between text-[9px] text-text-muted uppercase tracking-widest border-t border-border pt-1 mt-auto">
+                          <span>Status: ONLINE</span>
+                          <span>ALT / WIREFRAME PREVIEW</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <!-- SECTION 3.0 SYNTHESIS -->
+        <article id="synthesis" class="space-y-12 scroll-mt-24">
+          <div class="border-b border-border pb-6 flex items-baseline justify-between">
+            <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tight">3.0 Synthesis of Practicum</h2>
+            <span class="font-mono text-xs text-text-muted">Learnings & Realizations</span>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6">
+            <div class="border border-border p-6 space-y-4 bg-bg-secondary/15 hover:border-text-muted transition-colors">
+              <span class="font-mono text-[10px] text-accent uppercase tracking-wider block">01. Learnings</span>
+              <h3 class="text-base font-bold uppercase tracking-tight text-text-primary">Technical Accomplishments</h3>
+              <ul class="space-y-2 text-xs text-text-secondary font-light leading-relaxed">
+                <li><strong class="text-text-primary font-mono">Full-Stack Inertia:</strong> Built responsive SPAs merging Laravel API controllers seamlessly with Vue 3 client routers.</li>
+                <li><strong class="text-text-primary font-mono">Database Schema Design:</strong> Executed migrations, pivot models, soft deletes, and optimized query pipelines.</li>
+                <li><strong class="text-text-primary font-mono">Security Layers:</strong> Developed custom Socialite integrations, TOTP key allocations, and system audit logs.</li>
+              </ul>
+            </div>
+
+            <div class="border border-border p-6 space-y-4 bg-bg-secondary/15 hover:border-text-muted transition-colors">
+              <span class="font-mono text-[10px] text-accent uppercase tracking-wider block">02. Realizations</span>
+              <h3 class="text-base font-bold uppercase tracking-tight text-text-primary">Engineering Realities</h3>
+              <ul class="space-y-2 text-xs text-text-secondary font-light leading-relaxed">
+                <li><strong class="text-text-primary font-mono">Security First:</strong> Implementing 2FA and webcam logs showed that security is non-negotiable for enterprise databases.</li>
+                <li><strong class="text-text-primary font-mono">Code Maintenance:</strong> Modular setups and centralized traits reduce developer onboarding times.</li>
+                <li><strong class="text-text-primary font-mono">Documentation Value:</strong> Architectural checklists and clean wikis are as crucial as the code itself.</li>
+              </ul>
+            </div>
+
+            <div class="border border-border p-6 space-y-4 bg-bg-secondary/15 hover:border-text-muted transition-colors">
+              <span class="font-mono text-[10px] text-accent uppercase tracking-wider block">03. Conclusion</span>
+              <h3 class="text-base font-bold uppercase tracking-tight text-text-primary">Practicum Outcome</h3>
+              <p class="text-xs text-text-secondary font-light leading-relaxed">
+                The 480-hour internship at PurpleBug Inc. was a transformative practicum, offering hands-on full-stack development experience. Delivering 15 key features validated my technical preparation and established a solid foundation for a career in software engineering.
+              </p>
+            </div>
+          </div>
+        </article>
+
+        <!-- SECTION 4.0 WEEKLY JOURNAL -->
+        <article id="journal" class="space-y-12 scroll-mt-24">
+          <div class="border-b border-border pb-6 flex items-baseline justify-between">
+            <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tight">4.0 Appendices & Journal</h2>
+            <span class="font-mono text-xs text-text-muted">Appendix 7.0 Complete Record</span>
+          </div>
+
+          <!-- Appendix placeholders -->
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { num: "1.0", title: "Competency-Based CV", desc: "Professional curriculum vitae highlighting acquired stack skills." },
+              { num: "2.0", title: "Endorsement Letter", desc: "Official academic endorsement document issued by the university." },
+              { num: "3.0", title: "Practicum Acceptance", desc: "Signed agreement from PurpleBug Inc. starting April 27, 2026." },
+              { num: "4.0", title: "Liability Waiver", desc: "Signed safety waiver forms signed by student and guardians." },
+              { num: "5.0", title: "Training Plan", desc: "Approved internship schedule outlining curriculum outputs." },
+              { num: "6.0", title: "Daily Time Record (DTR)", desc: "Signed timesheets validating 480 completed practice hours." }
+            ].map(app => (
+              <div class="border border-border p-4 bg-bg-secondary/10 flex flex-col justify-between min-h-[110px] hover:border-text-muted transition-colors">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="font-mono text-[9px] text-text-muted border border-border px-1">APP {app.num}</span>
+                  <span class="font-mono text-[10px] font-bold text-text-primary uppercase tracking-tight">{app.title}</span>
+                </div>
+                <p class="text-[10px] text-text-secondary leading-relaxed font-light">{app.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <!-- Journal Table Section -->
+          <div class="space-y-6 pt-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <h3 class="font-mono text-xs font-bold text-text-primary uppercase tracking-wider">Appendix 7.0 Complete Weekly Journal</h3>
+              <!-- Journal Search Filter -->
+              <input
+                type="text"
+                id="journal-search"
+                placeholder="Search journal entries..."
+                class="w-full sm:w-64 border border-border bg-bg-secondary p-2 text-xs font-mono text-text-primary placeholder-text-muted focus-ring rounded-none outline-none"
+              />
+            </div>
+
+            <!-- Responsive Table Container -->
+            <div class="border border-border overflow-x-auto">
+              <table class="w-full text-left font-mono text-[10px] leading-relaxed border-collapse min-w-[600px]" id="journal-table">
+                <thead>
+                  <tr class="bg-bg-secondary/50 border-b border-border text-text-muted uppercase text-[9px]">
+                    <th class="p-3 w-16 border-r border-border">Week</th>
+                    <th class="p-3 w-28 border-r border-border">Date Range</th>
+                    <th class="p-3 border-r border-border">Summary of Accomplished Tasks</th>
+                    <th class="p-3 w-48">Key Learnings</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {journalWeeks.map((jw, index) => (
+                    <tr class={`journal-row border-b border-border/80 hover:bg-bg-secondary/40 transition-colors ${index % 2 === 0 ? 'bg-bg-primary' : 'bg-bg-secondary/10'}`}>
+                      <td class="p-3 font-bold text-text-primary border-r border-border">{jw.week}</td>
+                      <td class="p-3 text-text-secondary border-r border-border">{jw.dates}</td>
+                      <td class="p-3 text-text-secondary border-r border-border font-light font-sans text-xs">{jw.summary}</td>
+                      <td class="p-3 text-text-secondary font-light font-sans text-xs">{jw.learnings}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <div id="journal-empty" class="hidden p-6 text-center text-text-muted text-xs font-mono bg-bg-primary">
+                No matching journal entries found.
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+  </main>
+  
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* SVG grid pattern background styling */
+  .bg-grid-pattern {
+    background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+</style>
+
+<!-- Interactivity script -->
+<script>
+  // TOC highlights
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const sections = document.querySelectorAll('article[id]');
+
+  window.addEventListener('scroll', () => {
+    let current = "";
+    sections.forEach((section) => {
+      const sectionTop = (section as HTMLElement).offsetTop;
+      if (window.scrollY >= sectionTop - 120) {
+        current = section.getAttribute('id') || "";
+      }
+    });
+
+    tocLinks.forEach((link) => {
+      link.classList.remove('active');
+      link.classList.remove('text-text-primary');
+      link.classList.add('text-text-secondary');
+      
+      if (link.getAttribute('href') === `#${current}`) {
+        link.classList.add('active');
+        link.classList.add('text-text-primary');
+        link.classList.remove('text-text-secondary');
+      }
+    });
+  });
+
+  // Modules interactive tags filtering
+  const filterBtns = document.querySelectorAll('.module-filter-btn');
+  const moduleCards = document.querySelectorAll('.module-card');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const activeTag = btn.getAttribute('data-tag') || 'all';
+
+      // Update button visual states
+      filterBtns.forEach(b => {
+        b.classList.remove('bg-text-primary', 'text-bg-primary', 'border-text-primary');
+        b.classList.add('text-text-secondary', 'bg-transparent');
+      });
+      btn.classList.add('bg-text-primary', 'text-bg-primary', 'border-text-primary');
+      btn.classList.remove('text-text-secondary', 'bg-transparent');
+
+      // Filter cards
+      moduleCards.forEach(card => {
+        const cardTags = card.getAttribute('data-tags')?.split(',') || [];
+        if (activeTag === 'all' || cardTags.includes(activeTag)) {
+          (card as HTMLElement).style.display = 'block';
+          setTimeout(() => {
+            (card as HTMLElement).style.opacity = '1';
+            (card as HTMLElement).style.transform = 'translateY(0)';
+          }, 10);
+        } else {
+          (card as HTMLElement).style.opacity = '0';
+          (card as HTMLElement).style.transform = 'translateY(10px)';
+          setTimeout(() => {
+            (card as HTMLElement).style.display = 'none';
+          }, 200);
+        }
+      });
+    });
+  });
+
+  // Journal Search filter
+  const searchInput = document.getElementById('journal-search') as HTMLInputElement;
+  const journalRows = document.querySelectorAll('.journal-row');
+  const emptyMessage = document.getElementById('journal-empty');
+
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase().trim();
+      let hasMatches = false;
+
+      journalRows.forEach(row => {
+        const text = row.textContent?.toLowerCase() || "";
+        if (text.includes(query)) {
+          (row as HTMLElement).style.display = 'table-row';
+          hasMatches = true;
+        } else {
+          (row as HTMLElement).style.display = 'none';
+        }
+      });
+
+      if (emptyMessage) {
+        if (hasMatches) {
+          emptyMessage.classList.add('hidden');
+        } else {
+          emptyMessage.classList.remove('hidden');
+        }
+      }
+    });
+  }
+</script>
