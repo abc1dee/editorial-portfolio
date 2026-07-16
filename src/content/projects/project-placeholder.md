@@ -5,7 +5,7 @@ tags: ["Architecture", "Systems Design", "Backend"]
 impact: "Architecture | Challenge | Metric"
 role: "Lead Engineer"
 order: 2
-featured: true
+featured: false
 # thumbnail: "/images/projects/project2-thumb.webp"
 
 challenge: |
