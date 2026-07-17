@@ -15,7 +15,15 @@ export async function getStaticPaths() {
 
 const { project } = Astro.props;
 const { Content } = await render(project);
-const { title, description, tags, role, challenge, architecture, keyDecisions, results, liveUrl, githubUrl, thumbnail } = project.data;
+const { title, description, tags, role, challenge, architecture, keyDecisions, results, liveUrl, githubUrl, thumbnail, gallery } = project.data;
+
+const isMobile = tags && tags.some(t =>
+  t.toLowerCase().includes('react native') ||
+  t.toLowerCase().includes('mobile') ||
+  t.toLowerCase().includes('expo') ||
+  t.toLowerCase().includes('ios') ||
+  t.toLowerCase().includes('android')
+);
 ---
 
 <BaseLayout title={`${title} — Case Study`} description={description}>
@@ -63,25 +71,136 @@ const { title, description, tags, role, challenge, architecture, keyDecisions, r
       </div>
     </section>
 
-    <!-- Hero Image Slot -->
+    <!-- Hero Image / Gallery Slot -->
     <section class="px-6 mb-16">
       <div class="max-w-5xl mx-auto">
-        <div class="reveal aspect-video overflow-hidden bg-bg-card border border-border">
-          {thumbnail ? (
-            <img src={thumbnail} alt={`${title} hero image`} class="w-full h-full object-cover filter grayscale" />
-          ) : (
-            <div class="w-full h-full flex items-center justify-center bg-bg-secondary/20">
-              <div class="text-center">
-                <div class="w-16 h-16 mx-auto mb-4 border border-border flex items-center justify-center">
-                  <svg class="w-8 h-8 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v13.5A1.5 1.5 0 003.75 21z" />
+        {gallery && gallery.length > 0 ? (
+          /* Multi-image Gallery Carousel */
+          isMobile ? (
+            /* Mobile Phone Mockup Carousel */
+            <div class="reveal flex flex-col items-center justify-center gap-6 select-none">
+              <div class="flex items-center justify-center gap-4 sm:gap-8 w-full max-w-xl">
+                <!-- Prev Button -->
+                <button id="hero-prev" class="w-10 h-10 border border-border flex items-center justify-center text-text-secondary hover:text-text-primary hover:border-text-primary transition-all duration-200 cursor-pointer bg-bg-secondary/20 focus-ring" aria-label="Previous image">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                   </svg>
+                </button>
+
+                <!-- Phone Mockup Container -->
+                <div class="relative w-[260px] sm:w-[290px] aspect-[9/19.5] border-[8px] border-border bg-bg-card rounded-[36px] shadow-2xl overflow-hidden flex flex-col justify-between">
+                  <!-- Notch -->
+                  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-5 bg-border rounded-b-xl z-20 flex items-center justify-center">
+                    <div class="w-10 h-1 bg-bg-primary rounded-full mb-1"></div>
+                  </div>
+
+                  <!-- Slides -->
+                  <div class="relative flex-grow w-full h-full overflow-hidden bg-black">
+                    {gallery.map((item, idx) => (
+                      <div
+                        class={`hero-slide absolute inset-0 transition-opacity duration-500 flex items-center justify-center ${idx === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                        data-index={idx}
+                      >
+                        <img src={item.path} alt={item.label} class="w-full h-full object-cover" />
+                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-4 pt-12 text-center z-20">
+                          <span class="font-mono text-[9px] text-text-secondary/80 uppercase tracking-widest block">Slide {idx + 1} of {gallery.length}</span>
+                          <span class="text-xs font-bold text-white uppercase mt-1 block">{item.label}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <p class="text-xs font-mono uppercase tracking-wider text-text-muted">Project hero image slot</p>
+
+                <!-- Next Button -->
+                <button id="hero-next" class="w-10 h-10 border border-border flex items-center justify-center text-text-secondary hover:text-text-primary hover:border-text-primary transition-all duration-200 cursor-pointer bg-bg-secondary/20 focus-ring" aria-label="Next image">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
+                </button>
               </div>
             </div>
-          )}
-        </div>
+          ) : (
+            /* Desktop Browser Mockup Carousel */
+            <div class="reveal flex flex-col items-center justify-center gap-6 select-none">
+              <div class="flex items-center justify-center gap-4 sm:gap-6 w-full">
+                <!-- Prev Button -->
+                <button id="hero-prev" class="w-10 h-10 border border-border flex items-center justify-center text-text-secondary hover:text-text-primary hover:border-text-primary transition-all duration-200 cursor-pointer bg-bg-secondary/20 focus-ring" aria-label="Previous image">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                  </svg>
+                </button>
+
+                <!-- Browser Mockup Container -->
+                <div class="flex-grow w-full border border-border bg-bg-card font-mono text-[11px] text-text-secondary select-none overflow-hidden relative shadow-2xl">
+                  <!-- Browser Header -->
+                  <div class="flex items-center justify-between px-4 py-2.5 bg-bg-secondary/90 border-b border-border">
+                    <div class="flex items-center gap-1.5">
+                      <span class="w-2.5 h-2.5 border border-border bg-transparent"></span>
+                      <span class="w-2.5 h-2.5 border border-border bg-transparent"></span>
+                      <span class="w-2.5 h-2.5 border border-border bg-transparent"></span>
+                    </div>
+                    <span class="text-[9px] text-text-muted font-bold tracking-wider uppercase">Project Live Preview</span>
+                    <div class="w-6"></div>
+                  </div>
+
+                  <!-- Slides -->
+                  <div class="relative aspect-video overflow-hidden">
+                    {gallery.map((item, idx) => (
+                      <div
+                        class={`hero-slide absolute inset-0 transition-opacity duration-500 flex items-center justify-center ${idx === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                        data-index={idx}
+                      >
+                        <img src={item.path} alt={item.label} class="w-full h-full object-cover" />
+                        <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 pt-12 text-center z-20">
+                          <span class="font-mono text-[9px] text-text-secondary/80 uppercase tracking-widest block">Slide {idx + 1} of {gallery.length}</span>
+                          <span class="text-xs font-bold text-white uppercase mt-1 block">{item.label}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <!-- Next Button -->
+                <button id="hero-next" class="w-10 h-10 border border-border flex items-center justify-center text-text-secondary hover:text-text-primary hover:border-text-primary transition-all duration-200 cursor-pointer bg-bg-secondary/20 focus-ring" aria-label="Next image">
+                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )
+        ) : thumbnail ? (
+          /* Single Image Fallback */
+          isMobile ? (
+            /* Single Image Mobile Phone Mockup */
+            <div class="reveal flex flex-col items-center justify-center">
+              <div class="relative w-[260px] sm:w-[290px] aspect-[9/19.5] border-[8px] border-border bg-bg-card rounded-[36px] shadow-2xl overflow-hidden group">
+                <!-- Notch -->
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-5 bg-border rounded-b-xl z-20 flex items-center justify-center">
+                  <div class="w-10 h-1 bg-bg-primary rounded-full mb-1"></div>
+                </div>
+                <img src={thumbnail} alt={`${title} thumbnail`} class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+              </div>
+            </div>
+          ) : (
+            /* Single Image Desktop aspect-video */
+            <div class="reveal aspect-video overflow-hidden bg-bg-card border border-border group">
+              <img src={thumbnail} alt={`${title} hero image`} class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" />
+            </div>
+          )
+        ) : (
+          /* Generic Empty State */
+          <div class="reveal aspect-video overflow-hidden bg-bg-card border border-border flex items-center justify-center bg-bg-secondary/20">
+            <div class="text-center">
+              <div class="w-16 h-16 mx-auto mb-4 border border-border flex items-center justify-center">
+                <svg class="w-8 h-8 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v13.5A1.5 1.5 0 003.75 21z" />
+                </svg>
+              </div>
+              <p class="text-xs font-mono uppercase tracking-wider text-text-muted">Project hero image slot</p>
+            </div>
+          </div>
+        )}
       </div>
     </section>
 
@@ -159,6 +278,39 @@ const { title, description, tags, role, challenge, architecture, keyDecisions, r
       </div>
     </section>
 
+    <!-- Screenshots Gallery -->
+    {gallery && gallery.length > 0 && (
+      <section class="px-6 mb-16">
+        <div class="max-w-4xl mx-auto border-t border-border pt-12">
+          <h2 class="reveal font-mono text-xs font-bold uppercase tracking-widest mb-6">[ // SYSTEM_INTERFACE_SCREENSHOTS ]</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {gallery.map((item, i) => (
+              <div
+                class={`reveal reveal-delay-${Math.min(i + 1, 4)} border border-border bg-bg-card overflow-hidden group cursor-pointer gallery-card`}
+                data-path={item.path}
+                data-label={item.label}
+                data-fig={`Figure ${String(i + 1).padStart(2, '0')}`}
+                data-description={item.description || ''}
+              >
+                <div class="aspect-video overflow-hidden border-b border-border bg-bg-secondary/10">
+                  <img
+                    src={item.path}
+                    alt={item.label}
+                    class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="p-4 bg-bg-secondary/20">
+                  <span class="font-mono text-[9px] text-text-muted uppercase tracking-wider block">Figure {String(i + 1).padStart(2, '0')}</span>
+                  <span class="text-xs font-bold text-text-secondary uppercase">{item.label}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
     <!-- Next Project CTA -->
     <section class="px-6 pb-16">
       <div class="max-w-4xl mx-auto text-center border-t border-border pt-12">
@@ -171,5 +323,103 @@ const { title, description, tags, role, challenge, architecture, keyDecisions, r
       </div>
     </section>
   </main>
+  
+  <!-- Popup Modal for Screenshots -->
+  <div id="screenshot-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 p-4">
+    <!-- Modal Card Popup -->
+    <div class={`relative bg-bg-card border border-border flex flex-col w-full shadow-2xl p-6 md:p-8 ${isMobile ? 'max-w-sm' : 'max-w-4xl'}`}>
+      
+      <!-- Close Button inside card -->
+      <button id="modal-close" class="absolute top-4 right-4 w-8 h-8 border border-border flex items-center justify-center text-text-secondary hover:text-text-primary hover:border-text-primary transition-all duration-200 cursor-pointer bg-bg-secondary/40 font-mono text-[10px] focus-ring z-30" aria-label="Close modal">
+        ✕
+      </button>
+
+      <!-- Modal Content -->
+      <div class="flex flex-col gap-4">
+        <!-- Uncropped Image Container -->
+        <div class="border border-border bg-bg-secondary/10 flex items-center justify-center p-1 overflow-hidden">
+          <img id="modal-img" class="max-w-full max-h-[60vh] object-contain" src="" alt="" />
+        </div>
+        
+        <!-- Typography: Figure, Title, Description -->
+        <div class="text-left mt-2 border-t border-border/50 pt-4">
+          <span id="modal-fig" class="font-mono text-[9px] text-text-muted uppercase tracking-wider block"></span>
+          <h3 id="modal-title" class="text-sm font-bold text-text-primary uppercase mt-1"></h3>
+          <p id="modal-desc" class="text-text-secondary font-light text-[11px] leading-relaxed mt-2"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <Footer />
 </BaseLayout>
+
+<script>
+  // Hero Carousel Logic
+  const slides = document.querySelectorAll('.hero-slide');
+  const prevBtn = document.getElementById('hero-prev');
+  const nextBtn = document.getElementById('hero-next');
+
+  if (slides.length > 1 && prevBtn && nextBtn) {
+    let currentIdx = 0;
+    function updateSlides(newIdx: number) {
+      slides[currentIdx].classList.remove('opacity-100', 'z-10');
+      slides[currentIdx].classList.add('opacity-0', 'z-0');
+      currentIdx = (newIdx + slides.length) % slides.length;
+      slides[currentIdx].classList.remove('opacity-0', 'z-0');
+      slides[currentIdx].classList.add('opacity-100', 'z-10');
+    }
+    prevBtn.addEventListener('click', () => updateSlides(currentIdx - 1));
+    nextBtn.addEventListener('click', () => updateSlides(currentIdx + 1));
+  }
+
+  // Modal Logic
+  const modal = document.getElementById('screenshot-modal');
+  const modalImg = document.getElementById('modal-img');
+  const modalFig = document.getElementById('modal-fig');
+  const modalTitle = document.getElementById('modal-title');
+  const modalDesc = document.getElementById('modal-desc');
+  const modalClose = document.getElementById('modal-close');
+  const galleryCards = document.querySelectorAll('.gallery-card');
+
+  if (modal && modalImg && modalFig && modalTitle && modalDesc && modalClose) {
+    galleryCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const path = card.getAttribute('data-path') || '';
+        const label = card.getAttribute('data-label') || '';
+        const fig = card.getAttribute('data-fig') || '';
+        const desc = card.getAttribute('data-description') || '';
+
+        modalImg.setAttribute('src', path);
+        modalImg.setAttribute('alt', label);
+        modalFig.textContent = fig;
+        modalTitle.textContent = label;
+        modalDesc.textContent = desc;
+
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        document.body.style.overflow = 'hidden'; // Lock background scroll
+      });
+    });
+
+    const closeModal = () => {
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      document.body.style.overflow = ''; // Unlock scroll
+      setTimeout(() => {
+        modalImg.setAttribute('src', '');
+      }, 300);
+    };
+
+    modalClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+  }
+</script>

@@ -6,7 +6,30 @@ impact: "Full-stack mobile app — from concept to production"
 role: "Full-Stack Developer"
 order: 1
 featured: true
-# thumbnail: "/images/projects/gafi-thumb.webp"
+thumbnail: "/images/projects/GaFi/gafi-menu-screen.png"
+gallery:
+  - path: "/images/projects/GaFi/gafi-onboarding.jpg"
+    label: "Onboarding Flow"
+    description: "A welcoming onboarding experience that sets up the gaming metaphor. Users are introduced to XP systems, level-up mechanics, and achievements to prime them for their budgeting journey."
+  - path: "/images/projects/GaFi/gafi-account-creation.jpg"
+    label: "Account Creation Screen"
+    description: "Sleek and unified sign-up portal integrated with Supabase auth. Captures basic user metadata to tailor the game engine's financial rules to their specific profile."
+  - path: "/images/projects/GaFi/gafi-budget-setup.jpg"
+    label: "Initial Budget Setup"
+    description: "The foundation of the budget tracking system. Instead of dry inputs, the app guides users to set up monthly limits like selecting a difficulty tier in a role-playing game."
+  - path: "/images/projects/GaFi/gafi-custom-budgeting.jpg"
+    label: "Custom Mode Budgeting Rules"
+    description: "Gives advanced users detailed customizability over their financial rules, allowing them to adjust challenge levels, set multiplier parameters, and customize categories."
+  - path: "/images/projects/GaFi/gafi-custom-budgeting-2.jpg"
+    label: "Detailed Budget Category Setup"
+    description: "Granular management of expense categories. Allocating budgets to specific bins (e.g. food, transport) dynamically calculates real-time budget balances."
+  - path: "/images/projects/GaFi/gafi-tutorial.jpg"
+    label: "Interactive Gamified Tutorial"
+    description: "An interactive walkthrough that introduces users to core mechanics. Shows how logging expenses yields XP, levels up their account, and protects their streak multiplier."
+  - path: "/images/projects/GaFi/gafi-gameplay.jpg"
+    label: "Story Mode Financial Quest Gameplay"
+    description: "The core gamified dashboard where users play out 'financial quests'. Good financial habits advance the quest timeline, unlocking items, rewards, and storyline content."
+
 
 challenge: |
   Personal finance apps are notoriously boring. Users download them, set up a budget once,

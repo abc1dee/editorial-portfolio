@@ -19,7 +19,8 @@ const modules = [
       "Developer Time Travel controls for local sandbox testing"
     ],
     tech: ["Dashboard.vue", "TimeAtWork.vue", "DashboardCalendar.vue", "CalendarController", "AdminCalendarEventController"],
-    mockType: "dashboard"
+    mockType: "dashboard",
+    image: "/images/projects/Employee Dashboard and Time Clock Widget.png"
   },
   {
     id: "auth-2fa",
@@ -35,7 +36,8 @@ const modules = [
       "2FA settings dashboard for enabling, disabling, and key regeneration"
     ],
     tech: ["spomky-labs/otphp", "qrcode.vue", "TwoFactorCode Model", "Require2FA Middleware"],
-    mockType: "auth"
+    mockType: "auth",
+    image: "/images/projects/Authenticator 2FA Setup Screen.png"
   },
   {
     id: "sso",
@@ -51,7 +53,8 @@ const modules = [
       "SsoConsent.vue authorization flow screen"
     ],
     tech: ["BeeconnectedProvider.php", "SsoApplicationController", "SsoUserAccessManager", "SsoConsent.vue"],
-    mockType: "sso"
+    mockType: "sso",
+    image: "/images/projects/SSO Applications Management Dashboard.png"
   },
   {
     id: "webcam",
@@ -67,7 +70,7 @@ const modules = [
       "Graceful fallback handling for camera access errors"
     ],
     tech: ["WebcamCapture.vue", "Private Storage", "Multipart Form Handling"],
-    mockType: "webcam"
+    image: "/images/projects/Webcam Capture & Photo Verification.png"
   },
   {
     id: "timelogs",
@@ -83,7 +86,8 @@ const modules = [
       "Soft deletes preserving audit trails"
     ],
     tech: ["Admin\\TimeLogController.php", "Eloquent Eager Loading", "CSV Export Layer"],
-    mockType: "timelogs"
+    mockType: "timelogs",
+    image: "/images/projects/Admin Time Logs and Attendance Monitoring Panel.png"
   },
   {
     id: "emergency",
@@ -99,7 +103,8 @@ const modules = [
       "Toast notification prompts on updates"
     ],
     tech: ["ValidatesPhilippinePhones Trait", "StoreEmergencyContactRequest", "Toast.vue"],
-    mockType: "emergency"
+    mockType: "emergency",
+    image: "/images/projects/Emergency Contacts Management Dashboard.png"
   },
   {
     id: "leaves",
@@ -115,7 +120,8 @@ const modules = [
       "Calendar visualization of approved leaves"
     ],
     tech: ["LeaveRequestController", "LeaveRequest Model", "DashboardCalendar.vue"],
-    mockType: "leaves"
+    mockType: "leaves",
+    image: "/images/projects/Leave and Overtime Management.png"
   },
   {
     id: "overtime",
@@ -130,7 +136,10 @@ const modules = [
       "Role-restricted sidebar navigation items"
     ],
     tech: ["OvertimeRequestController", "EnsureRole Middleware"],
-    mockType: "overtime"
+    image: [
+      "/images/projects/Overtime Requests Module Employee.png",
+      "/images/projects/Overtime Management Admin.png"
+    ]
   },
   {
     id: "timesheets",
@@ -161,7 +170,8 @@ const modules = [
       "PDF downloads and CSV spreadsheet exports"
     ],
     tech: ["PayslipController", "AdminPayrollController", "EmployeePayslipEarnings", "PDF Renderer"],
-    mockType: "payroll"
+    mockType: "payroll",
+    image: "/images/projects/Payslip Management Module.png"
   },
   {
     id: "hiring",
@@ -177,7 +187,8 @@ const modules = [
       "Rate-limited submit throttling to prevent spam submissions"
     ],
     tech: ["HiringController", "CareerController", "GuestCareerLayout", "Throttle Middleware"],
-    mockType: "hiring"
+    mockType: "hiring",
+    image: "/images/projects/Hiring Management Page.png"
   },
   {
     id: "directory",
@@ -549,7 +560,7 @@ const tagsList = ["All", "Backend", "Frontend", "Security", "Admin", "Recruitmen
                 </div>
 
                 <!-- Description & Features -->
-                <div class="grid lg:grid-cols-2 gap-8">
+                <div class={`grid ${m.image ? 'lg:grid-cols-2' : 'grid-cols-1'} gap-8`}>
                   <div class="space-y-4">
                     <p class="text-xs sm:text-sm text-text-secondary leading-relaxed font-light">
                       {m.description}
@@ -578,303 +589,47 @@ const tagsList = ["All", "Backend", "Frontend", "Security", "Admin", "Recruitmen
                   </div>
 
                   <!-- Mock Screenshots / Placeholders -->
-                  <div class="flex items-center justify-center">
-                    <div class="w-full border border-border bg-bg-card font-mono text-[11px] text-text-secondary select-none overflow-hidden relative shadow-inner">
-                      <!-- Mock Header -->
-                      <div class="flex items-center justify-between px-4 py-2.5 bg-bg-secondary/90 border-b border-border">
-                        <div class="flex items-center gap-1.5">
-                          <span class="w-2 h-2 border border-border bg-transparent"></span>
-                          <span class="w-2 h-2 border border-border bg-transparent"></span>
-                          <span class="w-2 h-2 border border-border bg-transparent"></span>
-                        </div>
-                        <span class="text-[9px] text-text-muted font-bold tracking-wider uppercase">System View: {m.id}</span>
-                        <div class="w-6"></div>
-                      </div>
-
-                      <!-- Mock Viewport -->
-                      <div class="p-6 bg-bg-secondary/5 aspect-[16/9] flex flex-col justify-between relative overflow-hidden text-center items-center">
-                        <!-- BG grid details -->
-                        <div class="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
-                        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-text-primary/5 to-transparent pointer-events-none bg-[length:100%_4px] opacity-10"></div>
-                        
-                        <!-- Top status -->
-                        <div class="w-full flex justify-between text-[9px] text-text-muted uppercase tracking-widest border-b border-border pb-1">
-                          <span>Connection: SECURE</span>
-                          <span>BEECONNECTED_PORTAL_V1</span>
+                  {m.image && (
+                    <div class="flex items-center justify-center">
+                      <div class="w-full border border-border bg-bg-card font-mono text-[11px] text-text-secondary select-none overflow-hidden relative shadow-inner group">
+                        <!-- Mock Header -->
+                        <div class="flex items-center justify-between px-4 py-2.5 bg-bg-secondary/90 border-b border-border">
+                          <div class="flex items-center gap-1.5">
+                            <span class="w-2 h-2 border border-border bg-transparent"></span>
+                            <span class="w-2 h-2 border border-border bg-transparent"></span>
+                            <span class="w-2 h-2 border border-border bg-transparent"></span>
+                          </div>
+                          <span class="text-[9px] text-text-muted font-bold tracking-wider uppercase">System View: {m.id}</span>
+                          <div class="w-6"></div>
                         </div>
 
-                        <!-- Main content mockup based on Type -->
-                        {m.mockType === "dashboard" && (
-                          <div class="w-full max-w-sm space-y-4 my-auto">
-                            <div class="border border-border p-4 bg-bg-primary text-left relative">
-                              <span class="text-[8px] text-text-muted uppercase absolute top-2 right-2">CLOCK WIDGET</span>
-                              <div class="text-xl font-bold text-accent tracking-widest">08:00:00 AM</div>
-                              <div class="text-[9px] text-text-secondary mt-1">PHILIPPINE STANDARD TIME (GMT+8)</div>
-                              <div class="mt-3 flex gap-2">
-                                <span class="px-3 py-1 bg-text-primary text-bg-primary text-[9px] font-bold">CLOCK IN</span>
-                                <span class="px-3 py-1 border border-border text-[9px] text-text-muted">CLOCK OUT</span>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {m.mockType === "auth" && (
-                          <div class="w-full max-w-xs space-y-3 my-auto">
-                            <div class="border border-border p-4 bg-bg-primary text-left space-y-3">
-                              <div class="text-center font-bold text-xs uppercase text-text-primary">2FA AUTHENTICATOR SETUP</div>
-                              <div class="flex items-center gap-4 py-2 border-y border-border">
-                                <div class="w-12 h-12 border border-border border-dashed flex items-center justify-center font-bold text-lg text-text-muted">[QR]</div>
-                                <div class="text-[9px] text-text-secondary">Scan this QR in Google Authenticator or enter backup code: <span class="font-bold text-text-primary font-mono block">JBSWY3DPEHPK3PXP</span></div>
-                              </div>
-                              <div class="flex items-center gap-2">
-                                <span class="text-[9px] text-text-secondary uppercase">Code:</span>
-                                <div class="h-6 flex-grow border border-border bg-bg-secondary p-1 flex items-center justify-center font-bold tracking-widest">[ _ _ _  _ _ _ ]</div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {m.mockType === "sso" && (
-                          <div class="w-full max-w-sm space-y-3 my-auto">
-                            <div class="border border-border p-4 bg-bg-primary text-left space-y-3">
-                              <div class="text-xs font-bold text-text-primary flex justify-between items-center border-b border-border pb-1.5">
-                                <span>SSO App Registrations</span>
-                                <span class="px-2 py-0.5 bg-accent/10 text-accent text-[8px] border border-accent/20">ADMIN ONLY</span>
-                              </div>
-                              <div class="space-y-1.5">
-                                <div class="flex justify-between items-center text-[9px] border border-border p-1 bg-bg-secondary/40">
-                                  <span>[App] DocuMeant DMS</span>
-                                  <span class="text-accent">● ENABLED</span>
+                        <!-- Mock Viewport -->
+                        <div class="relative bg-bg-secondary/5 aspect-[16/9] overflow-hidden flex items-center justify-center">
+                          {Array.isArray(m.image) ? (
+                            <div class="grid grid-cols-2 gap-2 w-full h-full p-2 bg-bg-secondary/10">
+                              {m.image.map((imgUrl, idx) => (
+                                <div class="relative overflow-hidden border border-border/60 bg-bg-card flex items-center justify-center h-full">
+                                  <img
+                                    src={imgUrl}
+                                    alt={`Screenshot ${idx + 1} of ${m.title}`}
+                                    class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                                    loading="lazy"
+                                  />
                                 </div>
-                                <div class="flex justify-between items-center text-[9px] border border-border p-1 bg-bg-secondary/40">
-                                  <span>[App] Zagidee PM</span>
-                                  <span class="text-accent">● ENABLED</span>
-                                </div>
-                              </div>
+                              ))}
                             </div>
-                          </div>
-                        )}
-
-                        {m.mockType === "webcam" && (
-                          <div class="w-full max-w-sm space-y-2 my-auto">
-                            <div class="border border-border aspect-[16/10] bg-bg-primary flex flex-col justify-between p-3 relative">
-                              <div class="absolute inset-0 border border-red-500/20 pointer-events-none flex items-center justify-center">
-                                <div class="w-32 h-32 border border-dashed border-red-500/40 rounded-full flex items-center justify-center">
-                                  <span class="text-[8px] text-red-500/40">ALIGN FACE</span>
-                                </div>
-                              </div>
-                              <span class="text-[8px] text-text-muted">WEBCAM_STREAM (1280x720)</span>
-                              <div class="flex justify-between items-center text-[8px]">
-                                <span class="text-red-500">● LIVE FEED</span>
-                                <span class="bg-red-500 text-white px-2 py-0.5">CAPTURE</span>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {m.mockType === "timelogs" && (
-                          <div class="w-full max-w-sm space-y-2 my-auto">
-                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2">
-                              <div class="text-[9px] font-bold text-text-primary flex justify-between border-b border-border pb-1">
-                                <span>Recent Time Logs</span>
-                                <span>Total: 480hr</span>
-                              </div>
-                              <table class="w-full text-[8px] text-text-secondary border-collapse">
-                                <thead>
-                                  <tr class="border-b border-border">
-                                    <th class="text-left font-bold py-1">Employee</th>
-                                    <th class="text-left font-bold py-1">Type</th>
-                                    <th class="text-right font-bold py-1">Time</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr class="border-b border-border/40">
-                                    <td class="py-1">John Doe</td>
-                                    <td class="text-green-500 py-1">Clock In</td>
-                                    <td class="text-right py-1">08:00 AM</td>
-                                  </tr>
-                                  <tr>
-                                    <td class="py-1">Jane Smith</td>
-                                    <td class="text-red-400 py-1">Clock Out</td>
-                                    <td class="text-right py-1">05:00 PM</td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                        )}
-
-                        {m.mockType === "emergency" && (
-                          <div class="w-full max-w-sm space-y-2 my-auto">
-                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2">
-                              <div class="text-[9px] font-bold text-text-primary border-b border-border pb-1">EMERGENCY CONTACT SCHEMA</div>
-                              <div class="space-y-1.5 text-[8px]">
-                                <div>Name: <span class="text-text-primary">[Input Text]</span></div>
-                                <div>Relationship: <span class="text-text-primary">[Select dropdown]</span></div>
-                                <div>Mobile: <span class="text-text-primary font-mono">+63 917 123 4567</span> <span class="text-green-500">✓ VALID</span></div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {m.mockType === "leaves" && (
-                          <div class="w-full max-w-sm space-y-2 my-auto">
-                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2">
-                              <div class="text-[9px] font-bold text-text-primary border-b border-border pb-1 flex justify-between">
-                                <span>Leave History</span>
-                                <span class="text-accent font-bold">New Request +</span>
-                              </div>
-                              <div class="flex justify-between items-center text-[8px] border border-border p-1 bg-bg-secondary/40">
-                                <span>Sick Leave (2 Days)</span>
-                                <span class="px-1.5 py-0.5 bg-green-500/10 text-green-500 border border-green-500/20">APPROVED</span>
-                              </div>
-                              <div class="flex justify-between items-center text-[8px] border border-border p-1 bg-bg-secondary/40">
-                                <span>Vacation (1 Day)</span>
-                                <span class="px-1.5 py-0.5 bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">PENDING</span>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {m.mockType === "payroll" && (
-                          <div class="w-full max-w-sm space-y-2 my-auto">
-                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2 font-mono">
-                              <div class="text-[9px] font-bold text-text-primary border-b border-border pb-1 flex justify-between">
-                                <span>PAYSLIP DETAILS</span>
-                                <span class="text-accent font-bold">PDF</span>
-                              </div>
-                              <div class="space-y-1 text-[8px] text-text-secondary">
-                                <div class="flex justify-between"><span>Basic Salary:</span><span class="text-text-primary font-bold">₱45,000.00</span></div>
-                                <div class="flex justify-between"><span>Total Deductions:</span><span class="text-red-400 font-bold">-₱4,820.00</span></div>
-                                <div class="flex justify-between border-t border-border pt-1 font-bold text-text-primary">
-                                  <span>NET PAY:</span><span class="text-accent">₱40,180.00</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {m.mockType === "hiring" && (
-                          <div class="w-full max-w-sm space-y-2 my-auto">
-                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2">
-                              <div class="text-[9px] font-bold text-text-primary border-b border-border pb-1">HIRING PIPELINE BOARDS</div>
-                              <div class="grid grid-cols-3 gap-1.5 text-[7px] text-text-secondary">
-                                <div class="border border-border p-1 bg-bg-secondary">
-                                  <span class="font-bold text-text-primary block border-b border-border pb-0.5 mb-1">PENDING (5)</span>
-                                  <span>Jane Doe (CV)</span>
-                                </div>
-                                <div class="border border-border p-1 bg-bg-secondary">
-                                  <span class="font-bold text-text-primary block border-b border-border pb-0.5 mb-1">INTERVIEW (2)</span>
-                                  <span>Bob Smith</span>
-                                </div>
-                                <div class="border border-border p-1 bg-bg-secondary">
-                                  <span class="font-bold text-text-primary block border-b border-border pb-0.5 mb-1">HIRED (1)</span>
-                                  <span class="text-green-500">Alice Green</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {m.mockType === "directory" && (
-                          <div class="w-full max-w-sm space-y-2 my-auto">
-                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2">
-                              <div class="text-[9px] font-bold text-text-primary border-b border-border pb-1">Search Directory</div>
-                              <div class="grid grid-cols-2 gap-2 text-[8px]">
-                                <div class="border border-border p-2 flex items-center gap-2 bg-bg-secondary/40">
-                                  <div class="w-5 h-5 border border-border bg-accent/5 rounded-full flex items-center justify-center text-[7px] font-bold text-accent">👑</div>
-                                  <div>
-                                    <div class="font-bold text-text-primary">Admin User</div>
-                                    <div class="text-text-muted text-[6px]">System Admin</div>
-                                  </div>
-                                </div>
-                                <div class="border border-border p-2 flex items-center gap-2 bg-bg-secondary/40">
-                                  <div class="w-5 h-5 border border-border bg-text-muted/5 rounded-full flex items-center justify-center text-[7px] font-bold text-text-muted">👤</div>
-                                  <div>
-                                    <div class="font-bold text-text-primary">Staff Member</div>
-                                    <div class="text-text-muted text-[6px]">Developer</div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {m.mockType === "executive" && (
-                          <div class="w-full max-w-sm space-y-2 my-auto">
-                            <div class="border border-border p-3 bg-bg-primary text-left space-y-2">
-                              <div class="text-[9px] font-bold text-text-primary border-b border-border pb-1">EXECUTIVE OVERVIEW</div>
-                              <div class="grid grid-cols-3 gap-2 text-center text-text-secondary">
-                                <div class="border border-border p-1">
-                                  <span class="text-[12px] font-bold text-text-primary block">104</span>
-                                  <span class="text-[6px] text-text-muted uppercase">EMPLOYEES</span>
-                                </div>
-                                <div class="border border-border p-1">
-                                  <span class="text-[12px] font-bold text-text-primary block">3</span>
-                                  <span class="text-[6px] text-text-muted uppercase">PENDING LEAVES</span>
-                                </div>
-                                <div class="border border-border p-1">
-                                  <span class="text-[12px] font-bold text-text-primary block">1,824</span>
-                                  <span class="text-[6px] text-text-muted uppercase">AUDITS</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {m.mockType === "crud" && (
-                          <div class="w-full max-w-sm space-y-2 my-auto">
-                            <div class="border border-border p-3 bg-bg-primary text-left space-y-1.5 text-[8px]">
-                              <div class="font-bold text-text-primary border-b border-border pb-1">CREATE NEW EMPLOYEE</div>
-                              <div>First Name: <span class="text-text-muted">Enter first name...</span></div>
-                              <div>Last Name: <span class="text-text-muted">Enter last name...</span></div>
-                              <div class="border-t border-border pt-1 flex justify-end gap-1.5">
-                                <span class="border border-border px-2 py-0.5 text-text-muted">Cancel</span>
-                                <span class="bg-text-primary text-bg-primary px-2 py-0.5 font-bold">Submit</span>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {m.mockType === "layout" && (
-                          <div class="w-full max-w-sm space-y-2 my-auto">
-                            <div class="border border-border p-2 bg-bg-primary text-left flex gap-2 aspect-[16/8]">
-                              <div class="w-16 border-r border-border pr-2 flex flex-col gap-1 text-[7px] text-text-secondary">
-                                <span class="font-bold text-text-primary border-b border-border pb-0.5 mb-1">BEECONNECTED</span>
-                                <span class="text-accent font-bold">Dashboard</span>
-                                <span>My Info</span>
-                                <span>Timesheets</span>
-                                <span>Leave Mgmt</span>
-                              </div>
-                              <div class="flex-grow flex flex-col justify-between text-[7px]">
-                                <div class="flex justify-between border-b border-border pb-1">
-                                  <span class="font-bold text-text-primary">Dashboard</span>
-                                  <span class="text-text-muted">Search...</span>
-                                </div>
-                                <div class="text-[6px] text-text-muted">Main portal content space...</div>
-                                <div class="w-full bg-text-primary/10 border border-text-primary/20 text-text-primary p-1">Toast: Success!</div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {!m.mockType && (
-                          <div class="my-auto space-y-2">
-                            <span class="text-text-muted text-[10px] uppercase font-bold tracking-widest block">[ SCREENSHOT PLACEHOLDER ]</span>
-                            <span class="text-[9px] text-text-secondary italic max-w-[200px] block mx-auto font-light">
-                              Alt: Representative screenshot of the {m.title} interface showing dynamic layout components.
-                            </span>
-                          </div>
-                        )}
-
-                        <!-- Bottom status -->
-                        <div class="w-full flex justify-between text-[9px] text-text-muted uppercase tracking-widest border-t border-border pt-1 mt-auto">
-                          <span>Status: ONLINE</span>
-                          <span>ALT / WIREFRAME PREVIEW</span>
+                          ) : (
+                            <img
+                              src={m.image}
+                              alt={`Screenshot of ${m.title}`}
+                              class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                              loading="lazy"
+                            />
+                          )}
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             ))}

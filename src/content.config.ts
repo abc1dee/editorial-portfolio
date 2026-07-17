@@ -18,6 +18,11 @@ const projects = defineCollection({
     architecture: z.string().optional(),
     keyDecisions: z.array(z.string()).optional(),
     results: z.array(z.string()).optional(),
+    gallery: z.array(z.object({
+      path: z.string(),
+      label: z.string(),
+      description: z.string().optional(),
+    })).optional(),
   }),
 });
 
