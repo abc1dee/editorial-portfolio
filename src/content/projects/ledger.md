@@ -6,7 +6,21 @@ impact: "Predictive forecaster with EWMA linear regressions & Gemini AI Advisor"
 role: "Full-Stack Developer & Algorithm Engineer"
 order: 2
 featured: true
-thumbnail: ""
+githubUrl: "https://github.com/abc1dee/ExpenseTracker"
+thumbnail: "/images/projects/Ledger/Dashbaord.png"
+gallery:
+  - path: "/images/projects/Ledger/Dashbaord.png"
+    label: "Interactive Dashboard"
+    description: "The central analytical hub displaying real-time monthly stats, interactive charts, and month-over-month trends."
+  - path: "/images/projects/Ledger/Expense Tab.png"
+    label: "Expense Ledger"
+    description: "Granular search and category-filtered transaction ledger powered by exact Decimal database types for zero round-off error."
+  - path: "/images/projects/Ledger/Financial Insights Tab.png"
+    label: "Gemini AI Advisor"
+    description: "An asynchronous, non-blocking financial advisor integration that streams smart, personalized spending insights and recommendations."
+  - path: "/images/projects/Ledger/Insights Next Month (Advanced Composite Forecast).png"
+    label: "Advanced Forecasting Engine"
+    description: "Advanced predictive modeling screen powered by EWMA linear regression and inflation metrics to forecast spending trends."
 
 challenge: |
   Personal finance tools typically function as basic CRUD record books, failing to help users understand their spending pace or anticipate future trends. Building a forecasting engine that operates reliably on small datasets (1-2 months of data) and scales gracefully to seasonal regression models (13+ months) was a key math and engineering challenge. Additionally, integrating a Large Language Model (Gemini) to provide tailored advice required a non-blocking asynchronous architecture to prevent UI latency.
@@ -96,8 +110,6 @@ model Expense {
 ---
 
 ## Visual Media
-*(Screenshots will be uploaded here in the future)*
-*   **Dashboard View**: `[Dashboard Screenshot Placeholder]`
-*   **Searchable Ledger**: `[Ledger Screenshot Placeholder]`
-*   **Pace Projection Card**: `[Pace Projection Screenshot Placeholder]`
-*   **Composite Forecast Card**: `[Forecast Card Screenshot Placeholder]`
+
+The system interfaces and interactive dashboards are shown in the screenshots gallery at the bottom of this case study.
+

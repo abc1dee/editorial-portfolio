@@ -6,6 +6,7 @@ impact: "Full-stack mobile app — from concept to production"
 role: "Full-Stack Developer"
 order: 1
 featured: true
+githubUrl: "https://github.com/justjas189/GaFi_AndroidApp"
 thumbnail: "/images/projects/GaFi/gafi-menu-screen.png"
 gallery:
   - path: "/images/projects/GaFi/gafi-onboarding.jpg"

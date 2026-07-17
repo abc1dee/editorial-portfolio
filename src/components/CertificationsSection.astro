@@ -1,0 +1,66 @@
+---
+/* CertificationsSection.astro — Google Cloud Credentials Showcase */
+const certifications = [
+  {
+    title: "Build a Secure Google Cloud Network",
+    provider: "Google Cloud",
+    description: "Hands-on verification of VPC networking, firewall configuration, network threat mitigation, load balancing, and private access configuration."
+  },
+  {
+    title: "Set Up an App Dev Environment on Google Cloud",
+    provider: "Google Cloud",
+    description: "Covers configuring deployment environments, deploying containerized applications, GKE cluster orchestration, and managing Cloud SQL database integrations."
+  },
+  {
+    title: "Prepare Data for ML APIs on Google Cloud",
+    provider: "Google Cloud",
+    description: "Covers data engineering pipelines, feature selection, data cleaning, and utilizing pre-trained Google Cloud ML APIs for vision, translation, and NLP."
+  },
+  {
+    title: "Implement Load Balancing on Compute Engine",
+    provider: "Google Cloud",
+    description: "Focuses on configuring HTTPS, TCP, and UDP load balancers, setting up URL maps, SSL offloading, target proxies, and health check monitoring."
+  }
+];
+---
+
+<section id="certifications" class="border-b border-border grid md:grid-cols-12 w-full">
+  <!-- Title Column -->
+  <div class="md:col-span-4 p-8 sm:p-12 lg:p-16 border-b md:border-b-0 md:border-r border-border flex flex-col justify-between min-h-[300px]">
+    <div>
+      <div class="reveal font-mono text-[11px] text-text-muted tracking-widest mb-6 flex items-center gap-2">
+        <span class="text-text-primary">04.</span> CREDENTIALS
+      </div>
+      <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl lg:text-[2.6rem] font-black uppercase tracking-tighter leading-[1.0] mb-8 break-words max-w-full">
+        Cloud & Systems<br/>Certifications
+      </h2>
+    </div>
+    <p class="reveal reveal-delay-2 text-xs text-text-secondary leading-relaxed font-light max-w-xs">
+      Verified technical badges and credentials demonstrating engineering capabilities on cloud platforms.
+    </p>
+  </div>
+
+  <!-- Credentials Grid Column -->
+  <div class="md:col-span-8 p-8 sm:p-12 lg:p-16 bg-bg-secondary/20 flex flex-col justify-center">
+    <div class="grid sm:grid-cols-2 gap-6 w-full">
+      {certifications.map((cert, i) => (
+        <div class={`reveal reveal-delay-${Math.min(i + 1, 4)} border border-border bg-bg-card p-6 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:border-text-primary/30 group cursor-default select-none`}>
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <span class="font-mono text-[9px] text-text-muted uppercase tracking-widest block">[ // GCP_CREDENTIAL ]</span>
+              <span class="px-2 py-0.5 text-[8px] font-mono border border-border bg-bg-secondary/40 text-text-secondary uppercase tracking-wider group-hover:border-text-primary/30 group-hover:text-text-primary transition-colors">
+                {cert.provider}
+              </span>
+            </div>
+            <h3 class="text-sm font-bold text-text-primary uppercase tracking-tight mb-2 group-hover:text-text-primary transition-colors">
+              {cert.title}
+            </h3>
+            <p class="text-xs text-text-secondary leading-relaxed font-light mt-2">
+              {cert.description}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
