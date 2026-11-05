@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Nav from '../components/Nav.astro';
 import Hero from '../components/Hero.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import PracticumSection from '../components/PracticumSection.astro';
 import AboutSection from '../components/AboutSection.astro';
 import CertificationsSection from '../components/CertificationsSection.astro';
 import ContactSection from '../components/ContactSection.astro';
@@ -55,6 +56,9 @@ const projects = (await getCollection('projects'))
         ))}
       </div>
     </section>
+
+    <!-- Practicum Showcase Section -->
+    <PracticumSection />
 
     <AboutSection />
     <CertificationsSection />
