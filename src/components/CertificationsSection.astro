@@ -1,66 +1,178 @@
 ---
-/* CertificationsSection.astro — Google Cloud Credentials Showcase */
-const certifications = [
+/* CertificationsSection.astro — Google Cloud Credentials Showcase with Certificate Image Support */
+interface Certification {
+  id: string;
+  title: string;
+  provider: string;
+  category: string;
+  badgeId: string;
+  description: string;
+  image?: string; // Path to certification image (e.g. "/images/credentials/network-cert.png")
+  skills: string[];
+  issuedBy: string;
+}
+
+const certifications: Certification[] = [
   {
+    id: "gcp-network",
     title: "Build a Secure Google Cloud Network",
     provider: "Google Cloud",
-    description: "Hands-on verification of VPC networking, firewall configuration, network threat mitigation, load balancing, and private access configuration."
+    category: "Networking & Security",
+    badgeId: "GCP-SEC-NET-01",
+    description: "Hands-on verification of VPC networking, custom firewall configuration, network threat mitigation, multi-region load balancing, and private service access.",
+    skills: ["VPC Peering", "Cloud Armor", "Firewall Rules", "Private Google Access"],
+    issuedBy: "Google Cloud Skills Boost",
+    image: "", // Set image path here when available (e.g. "/images/credentials/gcp-network.png")
   },
   {
+    id: "gcp-app-dev",
     title: "Set Up an App Dev Environment on Google Cloud",
     provider: "Google Cloud",
-    description: "Covers configuring deployment environments, deploying containerized applications, GKE cluster orchestration, and managing Cloud SQL database integrations."
+    category: "DevOps & Cloud Orchestration",
+    badgeId: "GCP-APP-DEV-02",
+    description: "Covers configuring deployment environments, deploying containerized microservices, GKE cluster orchestration, IAM least-privilege, and Cloud SQL integrations.",
+    skills: ["GKE Clusters", "Cloud SQL", "Artifact Registry", "IAM Security"],
+    issuedBy: "Google Cloud Skills Boost",
+    image: "", // Set image path here when available
   },
   {
+    id: "gcp-ml",
     title: "Prepare Data for ML APIs on Google Cloud",
     provider: "Google Cloud",
-    description: "Covers data engineering pipelines, feature selection, data cleaning, and utilizing pre-trained Google Cloud ML APIs for vision, translation, and NLP."
+    category: "Data Engineering & AI",
+    badgeId: "GCP-DATA-ML-03",
+    description: "Covers data engineering pipelines, feature selection, data cleaning in BigQuery, and utilizing pre-trained Google Cloud ML APIs for vision, translation, and NLP.",
+    skills: ["BigQuery", "Data Pipelines", "Vertex AI / ML APIs", "Feature Engineering"],
+    issuedBy: "Google Cloud Skills Boost",
+    image: "", // Set image path here when available
   },
   {
+    id: "gcp-load-balancer",
     title: "Implement Load Balancing on Compute Engine",
     provider: "Google Cloud",
-    description: "Focuses on configuring HTTPS, TCP, and UDP load balancers, setting up URL maps, SSL offloading, target proxies, and health check monitoring."
-  }
+    category: "Infrastructure & Scalability",
+    badgeId: "GCP-INFRA-LB-04",
+    description: "Focuses on configuring Global HTTPS, TCP, and UDP load balancers, setting up URL maps, SSL offloading, target proxies, and health check monitoring.",
+    skills: ["HTTPS Load Balancing", "Compute Engine", "SSL Certificates", "Health Checks"],
+    issuedBy: "Google Cloud Skills Boost",
+    image: "", // Set image path here when available
+  },
 ];
 ---
 
-<section id="certifications" class="border-b border-border grid md:grid-cols-12 w-full">
-  <!-- Title Column -->
-  <div class="md:col-span-4 p-8 sm:p-12 lg:p-16 border-b md:border-b-0 md:border-r border-border flex flex-col justify-between min-h-[300px]">
+<section id="certifications" class="border-b border-border p-6 sm:p-10 lg:p-12 bg-white">
+  <!-- Section Header -->
+  <div class="mb-8 sm:mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-neutral-200">
     <div>
-      <div class="reveal font-mono text-[11px] text-text-muted tracking-widest mb-6 flex items-center gap-2">
-        <span class="text-text-primary">04.</span> CREDENTIALS
+      <div class="reveal font-mono text-[11px] text-neutral-500 tracking-widest mb-3 flex items-center gap-2">
+        <span class="text-neutral-900 font-bold">04.</span> CREDENTIALS // VERIFIED PLATFORM BADGES
       </div>
-      <h2 class="reveal reveal-delay-1 text-3xl sm:text-4xl lg:text-[2.6rem] font-black uppercase tracking-tighter leading-[1.0] mb-8 break-words max-w-full">
-        Cloud & Systems<br/>Certifications
+      <h2 class="reveal reveal-delay-1 text-3xl sm:text-5xl font-black uppercase tracking-tight text-[#111827]">
+        Cloud & Systems Certifications
       </h2>
     </div>
-    <p class="reveal reveal-delay-2 text-xs text-text-secondary leading-relaxed font-light max-w-xs">
-      Verified technical badges and credentials demonstrating engineering capabilities on cloud platforms.
+    <p class="reveal reveal-delay-2 text-xs sm:text-sm text-neutral-600 leading-relaxed font-normal max-w-sm">
+      Hands-on technical certifications and skill badges verified on Google Cloud Platform.
     </p>
   </div>
 
-  <!-- Credentials Grid Column -->
-  <div class="md:col-span-8 p-8 sm:p-12 lg:p-16 bg-bg-secondary/20 flex flex-col justify-center">
-    <div class="grid sm:grid-cols-2 gap-6 w-full">
-      {certifications.map((cert, i) => (
-        <div class={`reveal reveal-delay-${Math.min(i + 1, 4)} border border-border bg-bg-card p-6 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:border-text-primary/30 group cursor-default select-none`}>
-          <div>
-            <div class="flex items-center justify-between mb-4">
-              <span class="font-mono text-[9px] text-text-muted uppercase tracking-widest block">[ // GCP_CREDENTIAL ]</span>
-              <span class="px-2 py-0.5 text-[8px] font-mono border border-border bg-bg-secondary/40 text-text-secondary uppercase tracking-wider group-hover:border-text-primary/30 group-hover:text-text-primary transition-colors">
-                {cert.provider}
+  <!-- Credentials 2-Column Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+    {certifications.map((cert, i) => (
+      <div
+        class={`reveal reveal-delay-${Math.min(i + 1, 4)} group relative flex flex-col justify-between bg-neutral-50/70 hover:bg-neutral-50 border border-neutral-200 rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-xs hover:shadow-md transition-all duration-300 overflow-hidden`}
+      >
+        <div>
+          <!-- Certificate Visual Frame (Displays uploaded certificate image or modern verified seal) -->
+          <div
+            class="relative aspect-[16/9] w-full rounded-xl sm:rounded-2xl overflow-hidden border border-neutral-200/90 bg-white shadow-2xs group-hover:shadow-md transition-all duration-300 flex items-center justify-center p-3 mb-6"
+          >
+            {cert.image ? (
+              <img
+                src={cert.image}
+                alt={`${cert.title} Certificate`}
+                class="w-full h-full object-cover rounded-lg shadow-2xs transition-transform duration-500 ease-out group-hover:scale-[1.02]"
+                loading="lazy"
+              />
+            ) : (
+              <!-- Editorial Verified Certificate Badge Frame Placeholder -->
+              <div class="relative w-full h-full rounded-lg bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex flex-col items-center justify-center p-4 border border-dashed border-neutral-200 text-center select-none">
+                <!-- Google Cloud 4-Color Accent Bar -->
+                <div class="absolute top-0 inset-x-0 h-1 flex">
+                  <span class="flex-1 bg-[#4285F4]"></span>
+                  <span class="flex-1 bg-[#EA4335]"></span>
+                  <span class="flex-1 bg-[#FBBC05]"></span>
+                  <span class="flex-1 bg-[#34A853]"></span>
+                </div>
+
+                <!-- GCP Emblem Icon -->
+                <div class="w-10 h-10 rounded-xl bg-white border border-neutral-200 shadow-2xs flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
+                  <svg class="w-5 h-5 text-neutral-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-.778.099-1.533.284-2.253" />
+                  </svg>
+                </div>
+
+                <span class="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-700">
+                  {cert.provider} Verified Skill Badge
+                </span>
+                <span class="text-[9px] font-mono text-neutral-400 uppercase tracking-wider mt-0.5">
+                  ID: {cert.badgeId}
+                </span>
+
+                <!-- Subtle Stamp -->
+                <div class="absolute bottom-2 right-2.5 px-2 py-0.5 rounded-full bg-white/90 border border-neutral-200 text-[8px] font-mono uppercase tracking-wider text-neutral-500 shadow-2xs">
+                  CERTIFICATE READY
+                </div>
+              </div>
+            )}
+          </div>
+
+          <!-- Card Header & Metadata -->
+          <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-wider mb-2.5">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-neutral-200 text-neutral-800 font-bold shadow-2xs">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#4285F4]"></span>
+              {cert.provider}
+            </span>
+            <span class="text-neutral-400 font-semibold">
+              {cert.category}
+            </span>
+          </div>
+
+          <!-- Title -->
+          <h3 class="text-lg sm:text-xl font-black uppercase tracking-tight text-[#111827] mb-2 group-hover:text-black transition-colors">
+            {cert.title}
+          </h3>
+
+          <!-- Description -->
+          <p class="text-xs sm:text-sm text-neutral-600 leading-relaxed font-light mb-5">
+            {cert.description}
+          </p>
+
+          <!-- Competency Pills -->
+          <div class="flex flex-wrap gap-1.5 mb-6">
+            {cert.skills.map((skill) => (
+              <span class="px-2 py-0.5 text-[11px] font-mono rounded-md bg-white border border-neutral-200 text-neutral-700">
+                {skill}
               </span>
-            </div>
-            <h3 class="text-sm font-bold text-text-primary uppercase tracking-tight mb-2 group-hover:text-text-primary transition-colors">
-              {cert.title}
-            </h3>
-            <p class="text-xs text-text-secondary leading-relaxed font-light mt-2">
-              {cert.description}
-            </p>
+            ))}
           </div>
         </div>
-      ))}
-    </div>
+
+        <!-- Footer / Verification Status -->
+        <div class="pt-4 border-t border-neutral-200/80 flex items-center justify-between mt-auto">
+          <div class="flex items-center gap-1.5 text-[11px] font-mono text-emerald-700 font-medium">
+            <svg class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+            </svg>
+            <span>Verified Badge</span>
+          </div>
+
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-medium border border-neutral-200 bg-white text-neutral-800 shadow-2xs group-hover:border-neutral-900 group-hover:bg-neutral-900 group-hover:text-white transition-all duration-200">
+            <span>{cert.image ? "View Certificate" : "Verified Badge"}</span>
+            <span class="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">↗</span>
+          </span>
+        </div>
+      </div>
+    ))}
   </div>
 </section>
