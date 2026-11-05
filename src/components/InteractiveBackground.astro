@@ -65,13 +65,11 @@
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      const isDark = document.documentElement.classList.contains("dark");
-      
-      // Theme colors
-      const gridColor = isDark ? "rgba(255, 255, 255, 0.02)" : "rgba(9, 9, 11, 0.02)";
-      const crosshairColor = isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(9, 9, 11, 0.05)";
-      const activeCrosshairColor = isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(9, 9, 11, 0.12)";
-      const textColor = isDark ? "rgba(255, 255, 255, 0.35)" : "rgba(9, 9, 11, 0.35)";
+      // Canvas colors (Light editorial scheme)
+      const gridColor = "rgba(9, 9, 11, 0.02)";
+      const crosshairColor = "rgba(9, 9, 11, 0.05)";
+      const activeCrosshairColor = "rgba(9, 9, 11, 0.12)";
+      const textColor = "rgba(9, 9, 11, 0.35)";
 
       // 1. Draw static background architectural grid (80px squares)
       const gridSize = 80;
@@ -129,7 +127,7 @@
           // Small intersection point
           ctx.beginPath();
           ctx.arc(target.x, target.y, 2, 0, Math.PI * 2);
-          ctx.fillStyle = isDark ? "rgba(255, 255, 255, 0.5)" : "rgba(9, 9, 11, 0.5)";
+          ctx.fillStyle = "rgba(9, 9, 11, 0.5)";
           ctx.fill();
         }
       }

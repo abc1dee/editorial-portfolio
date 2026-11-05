@@ -4,37 +4,14 @@
 @import "tailwindcss";
 
 /* ================================================================
-   DESIGN SYSTEM — "Corporate Energy" Dark-Mode-First Palette
+   DESIGN SYSTEM — "Corporate Energy" Light Editorial Palette
    ================================================================
-   Base: Deep slate/charcoal backgrounds
-   Accent: Emerald green for interactive highlights
+   Base: Clean crisp editorial light canvas
    Typography: Inter (body) + JetBrains Mono (code)
    ================================================================ */
 
-/* --- CSS Variables for Light/Dark mode --- */
+/* --- CSS Variables --- */
 :root {
-  --bg-primary: #000000;
-  --bg-secondary: #0a0a0a;
-  --bg-tertiary: #171717;
-  --bg-card: #0c0c0e;
-  --bg-card-hover: #141416;
-
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1aa;
-  --text-muted: #52525b;
-
-  --accent: #ffffff;
-  --accent-hover: #e4e4e7;
-  --accent-glow: rgba(255, 255, 255, 0.12);
-  --accent-subtle: rgba(255, 255, 255, 0.06);
-
-  --border-color: rgba(255, 255, 255, 0.15);
-  --border-hover-color: rgba(255, 255, 255, 0.35);
-
-  --button-text: #000000;
-}
-
-html:not(.dark) {
   --bg-primary: #ffffff;
   --bg-secondary: #fafafa;
   --bg-tertiary: #f4f4f5;
@@ -215,7 +192,7 @@ code, pre {
 
 /* Glass effect for cards */
 .glass {
-  background: rgba(var(--bg-primary), 0.8);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--color-border);

@@ -1,6 +1,4 @@
 ---
-import ThemeToggle from "./ThemeToggle.astro";
-
 const navLinks = [
   { num: "01", label: "WORK", href: "/#projects" },
   { num: "02", label: "PRACTICUM", href: "/practicum" },
@@ -37,7 +35,6 @@ const navLinks = [
           </a>
         ))
       }
-      <ThemeToggle />
       <a
         href="#contact"
         id="nav-cta"
@@ -49,7 +46,6 @@ const navLinks = [
 
     <!-- Mobile Actions -->
     <div class="flex items-center gap-4 md:hidden">
-      <ThemeToggle />
       <!-- Mobile Hamburger -->
       <button
         id="mobile-menu-btn"
